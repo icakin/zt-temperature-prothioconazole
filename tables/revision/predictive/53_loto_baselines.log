@@ -1,0 +1,71 @@
+=== LOTO on observed targets (log10 EC50) ===
+model                     label  n_params  LOTO_RMSE  LOTO_MAE  coverage_95  err_15  err_27  err_28
+   M0       constant log10 EC50         1     0.2466    0.2016       0.8571  0.2832 -0.4575 -0.1631
+   M1               linear in T         2     0.2534    0.2119       1.0000  0.2185 -0.3906 -0.0354
+   M2            linear in 1/kT         2     0.2537    0.2125       1.0000  0.2216 -0.3912 -0.0381
+   M5 safety-margin (published)         3     0.2906    0.2418       0.8571  0.5313 -0.2557  0.1575
+   M3       control-growth only         2     0.3065    0.2433       0.8571  0.5563 -0.4419 -0.1215
+   M4            quadratic in T         3     0.4831    0.3556       0.8571  1.0752 -0.3931  0.0183
+
+best empirical baseline (lowest RMSE among M0-M4): M0
+
+=== joint posterior resampling: 500 draws (joint across temperatures; independent draws prohibited) ===
+model                     label  rmse_median  rmse_p05  rmse_p95  e27_median  e27_p05  e27_p95  e27_interval_includes_zero  sign_consistency_s  p_within_tol
+   M0       constant log10 EC50       0.2753    0.1808    0.3757     -0.4532  -0.7357  -0.2771                       False               1.000         0.000
+   M1               linear in T       0.2809    0.1761    0.4085     -0.3820  -0.6845  -0.1933                       False               1.000         0.004
+   M2            linear in 1/kT       0.2813    0.1759    0.4100     -0.3823  -0.6845  -0.1943                       False               1.000         0.004
+   M3       control-growth only       0.3346    0.2188    0.4614     -0.4397  -0.7333  -0.2594                       False               1.000         0.000
+   M4            quadratic in T       0.4955    0.2888    0.7531     -0.3805  -0.7010  -0.1949                       False               1.000         0.006
+   M5 safety-margin (published)       0.3161    0.1972    0.4424     -0.2443  -0.5479  -0.0508                       False               0.982         0.090
+
+=== pairwise win proportions (row attains lower LOTO RMSE than column) ===
+       M0     M1     M2     M3     M4     M5
+M0    NaN  0.620  0.622  1.000  1.000  0.910
+M1  0.380    NaN  0.840  0.956  1.000  0.944
+M2  0.378  0.160    NaN  0.954  1.000  0.940
+M3  0.000  0.044  0.046    NaN  0.978  0.176
+M4  0.000  0.000  0.000  0.022    NaN  0.002
+M5  0.090  0.056  0.060  0.824  0.998    NaN
+
+M5 27 C readouts: sign consistency s = 0.982, Pr(|e27| < 0.1) = 0.090
+pre-registered combination rule: target uncertainty MATERIALLY EXPLAINS the miss if s < 0.90 or p >= 0.20  ->  NO
+
+=== identifiability (unit-invariant) ===
+full-fit parameters: log_Ki=-10.43 (SE 6.47e+04), log_A=7.251 (SE 6.47e+04), Ea=0.4722 (SE 0.445)
+
+normalised Hessian (dimensionless curvature coupling):
+        log_Ki   log_A      Ea
+log_Ki  1.0000  1.0000  0.3285
+log_A   1.0000  1.0000  0.3285
+Ea      0.3285  0.3285  1.0000
+
+parameter correlation matrix (from inverse-Hessian covariance):
+        log_Ki   log_A      Ea
+log_Ki  1.0000 -1.0000 -0.7701
+log_A  -1.0000  1.0000  0.7701
+Ea     -0.7701  0.7701  1.0000
+
+SE-scaled Jacobian singular values: [9.59438363e+05 3.21657200e+00 1.07548600e+00]
+singular value ratio (largest/smallest) = 8.921e+05
+
+=== fold parameter excursions (deviation from full fit, in SE units) ===
+ held_out_T  log_Ki_dev_SE  log_A_dev_SE  Ea_dev_SE  Ea_fitted
+       15.0            0.0          -0.0     -1.061      0.000
+       18.0            0.0          -0.0      0.244      0.581
+       21.0            0.0          -0.0      0.001      0.473
+       24.0           -0.0           0.0      0.061      0.499
+       26.0           -0.0           0.0      0.088      0.512
+       27.0           -0.0           0.0     -0.201      0.383
+       28.0            0.0          -0.0      0.012      0.478
+max |excursion| = 1.061 SE
+
+=== post hoc: is the safety-margin term active at the optimum? ===
+fitted safety margin sigma(T) = capacity / demand:
+   15C 25939  18C 25283  21C 26966  24C 27061  26C 38396  27C 52241  28C 54893
+minimum sigma = 25283; relative error of approximating (2*sigma - 1) by 2*sigma = 1.98e-05
+The saturating term is therefore inactive: the model is in its linear regime.
+max |difference| between the fitted model and [c - (Ea/kB ln10)(1/T - 1/Tref) - log10 mu(T)] = 8.59e-06 log10 units
+The safety-margin structure FIXES the coefficient on log10 mu at -1.000; freeing it gives -0.996, i.e. the constraint is essentially what the data prefer and is NOT what costs M5 out of sample.
+Interpretation: at its optimum M5 is algebraically an Arrhenius term in 1/T minus log10 control growth, with 2 effective parameters (only the product Ki*A is identified). Its out-of-sample loss is therefore not a consequence of a wrong constraint but of the predictors themselves carrying no transferable signal -- both M5 and M3 are beaten by a constant.
+
+wrote -> tables/revision/predictive

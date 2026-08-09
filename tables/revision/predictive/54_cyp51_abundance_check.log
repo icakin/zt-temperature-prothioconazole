@@ -1,0 +1,20 @@
+
+=== 21 vs 15 C (control) ===
+  gene            : Mycgr3G110231 
+  log2FC          :0.0575  (fold change 1.041)
+  adjusted P      : 0.838 
+  |log2FC| exceeds 27.4 % of genome-wide temperature effects
+  genome-wide |log2FC| median 0.115  90th pct 0.331 
+
+=== 27 vs 15 C (control) ===
+  gene            : Mycgr3G110231 
+  log2FC          :-0.5242  (fold change 0.695)
+  adjusted P      : 0.0474 
+  |log2FC| exceeds 59.3 % of genome-wide temperature effects
+  genome-wide |log2FC| median 0.413  90th pct 1.205 
+
+=== interpretation (asymmetric, pre-registered) ===
+No strong temperature effect on CYP51 transcript is detected.
+This FAILS TO CONTRADICT the constant-abundance assumption. It does NOT
+establish it: transcript is not protein, three temperatures is not seven,
+and the test has limited power. No positive claim follows.

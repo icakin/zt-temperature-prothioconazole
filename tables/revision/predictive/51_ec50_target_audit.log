@@ -1,0 +1,43 @@
+posterior draws available: 8000 
+
+wrote joint draws: 56000 rows
+
+=== correlation of log10 EC50 across temperatures (joint posterior) ===
+       15     18     21     24     26     27     28
+15  1.000 -0.024  0.193  0.766  0.352  0.005  0.060
+18 -0.024  1.000 -0.012 -0.017 -0.024  0.000 -0.003
+21  0.193 -0.012  1.000  0.162  0.118 -0.003  0.013
+24  0.766 -0.017  0.162  1.000  0.283 -0.022  0.058
+26  0.352 -0.024  0.118  0.283  1.000 -0.010  0.037
+27  0.005  0.000 -0.003 -0.022 -0.010  1.000  0.017
+28  0.060 -0.003  0.013  0.058  0.037  0.017  1.000
+
+mean off-diagonal correlation: 0.093 
+
+=== per-temperature EC50 target audit ===
+ temperature     EC50 EC50_lower EC50_upper sd_log10_EC50 median_above_max_dose
+          15 1.121620  0.6908423   1.701222    0.09892680                 FALSE
+          18 3.419863  1.7945518   7.122088    0.15046130                 FALSE
+          21 2.042922  1.2847194   3.610614    0.11329522                 FALSE
+          24 1.403646  0.9858890   2.017046    0.07985493                 FALSE
+          26 1.848074  1.1311720   3.362248    0.11909936                 FALSE
+          27 4.997360  3.1992726  11.167307    0.13662936                  TRUE
+          28 2.659229  1.6442390   4.589465    0.11362196                 FALSE
+ upper_above_max_dose min_rel_observed interpolation_flag
+                FALSE            0.321               TRUE
+                 TRUE            0.529              FALSE
+                FALSE            0.434               TRUE
+                FALSE            0.281               TRUE
+                FALSE            0.396               TRUE
+                 TRUE            0.528              FALSE
+                 TRUE            0.475               TRUE
+
+temperatures satisfying the >=50%-inhibition interpolation flag: 5 of 7
+temperatures with median EC50 beyond the max tested dose ( 4 mg/L): 1 
+temperatures with upper 95% bound beyond the max tested dose: 3 
+
+=== target-uncertainty scale ===
+TUS (RMS posterior SD of log10 EC50) = 0.118 log10 units
+signal span (max - min log10 EC50)   = 0.6489 log10 units
+ratio TUS / signal span              = 0.182 
+[scale for judging error differences; not a floor]
