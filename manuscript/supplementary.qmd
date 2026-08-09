@@ -6,7 +6,11 @@ format:
   pdf:
     geometry: margin=2.5cm
     pdf-engine: xelatex
-    mainfont: DejaVu Serif
+    mainfont: DejaVuSerif.ttf
+    mainfontoptions:
+      - BoldFont=DejaVuSerif-Bold.ttf
+      - ItalicFont=DejaVuSerif-Italic.ttf
+      - BoldItalicFont=DejaVuSerif-BoldItalic.ttf
     output-file: "Supplementary_Materials"
 ---
 
