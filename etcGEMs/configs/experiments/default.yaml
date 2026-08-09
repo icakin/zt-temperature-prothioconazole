@@ -1,0 +1,16 @@
+# Default sweep experiment: the standard Latin-hypercube sensitivity sweep.
+# Method overlay only -- combined with any strain via `--experiment default`.
+kind: sweep
+sensitivity:
+  n_samples: 120
+  seed: 1
+  parameters:
+    dTopt:        [-6.0, 6.0]     # shift all enzyme optima (K)
+    topt_scale:   [0.7, 1.4]      # widen/compress optimum heterogeneity
+    dCp_scale:    [0.5, 2.0]      # scale curvature / thermal breadth
+    budget_scale: [0.7, 1.1]      # total proteome allocation
+  groups: []                      # e.g. [grp0, grp1] to add per-group alloc dims
+
+# Perturb the sector-allocation axis directly (hold the measured T-dependent
+# curve off during the sweep so the allocation perturbation registers).
+allocation_from_data: null

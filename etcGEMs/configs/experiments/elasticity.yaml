@@ -1,0 +1,24 @@
+# Equal-perturbation (standardised elasticity) sensitivity on the complete model.
+#
+# Moves EVERY input by the same standardised step h (central finite difference)
+# around the nominal, and reports a dimensionless elasticity E[D,p] per TPC
+# descriptor — so the ranking reflects the model's structural leverage, not the
+# hand-set unequal ranges of the LHS/Spearman sweep. Local (around the nominal).
+#
+# Sectors are active (from the strain); allocation_from_data is held OFF during the
+# analysis so the sector-allocation knob (f_metab/f_maint) is perturbable.
+kind: elasticity
+proteome_sectors:
+  enabled: true
+  atpm_reaction: null
+allocation_from_data: null
+sensitivity:
+  h: 0.10                         # standardised relative step
+  inputs:                        # envelope + pool + sector-allocation axes
+    - dTopt                      # additive shift of every enzyme optimum (K); step = h * sd(Topt)
+    - dTm                        # additive shift of every enzyme Tm (K); step = h * sd(Tm) -> hot side/CTmax
+    - topt_scale                 # spread of enzyme optima about T0
+    - dCp_scale                  # MMRT curvature / thermal breadth
+    - budget_scale               # total metabolic proteome pool
+    - f_metab                    # metabolic sector fraction (reallocates to/from biosynthesis)
+    - f_maint                    # maintenance sector fraction

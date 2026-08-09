@@ -1,0 +1,17 @@
+# Allocation vs envelope variance decomposition (H1.3).
+# Crossed design: M allocation samples x N envelope samples, each evaluated to a
+# full TPC; per-descriptor two-group functional-ANOVA / Shapley split.
+# Fractions are relative to these (uniform) input ranges -- state them with any
+# result. Keep budget_scale <= ~1.1 so the proteome pool stays binding (else the
+# allocation axis looks artificially inert).
+kind: decompose
+decomposition:
+  n_allocation: 24
+  n_envelope: 24
+  seed: 1
+  allocation_params:          # proteome allocation (magnitude)
+    budget_scale: [0.6, 1.1]
+  envelope_params:            # genome-set thermal envelope (shape/position)
+    dTopt:      [-6.0, 6.0]
+    topt_scale: [0.7, 1.4]
+    dCp_scale:  [0.5, 2.0]

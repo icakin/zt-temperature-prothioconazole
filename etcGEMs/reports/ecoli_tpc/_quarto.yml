@@ -1,0 +1,28 @@
+project:
+  type: default
+  output-dir: _output
+  render:
+    - report.qmd
+    - supplementary.qmd
+
+format:
+  pdf:
+    documentclass: article
+    colorlinks: true
+    geometry: margin=2.5cm
+    include-in-header:
+      file: header.tex
+  docx: default
+
+bibliography: references.bib
+csl: nature-communications.csl
+
+crossref:
+  fig-prefix: "Fig."
+  tbl-prefix: "Table"
+
+execute:
+  echo: false
+  warning: false
+
+jupyter: python3

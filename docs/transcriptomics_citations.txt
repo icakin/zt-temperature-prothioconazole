@@ -1,0 +1,17 @@
+START:fastqc
+FastQC v0.12.1
+END:fastqc
+START:fastq_screen
+FastQ Screen v0.16.0
+END:fastq_screen
+START:blast
+blastn: 2.12.0+
+Package: blast 2.12.0, build Feb 24 2022 03:36:48
+Database: Nucleotide collection (nt)
+80,470,192 sequences; 696,179,004,795 total bases
+
+Date: Mar 19, 2022  12:40 PM	Longest sequence: 99,791,824 bases
+END:blast
+START:multiqc
+multiqc, version 1.35
+END:multiqc

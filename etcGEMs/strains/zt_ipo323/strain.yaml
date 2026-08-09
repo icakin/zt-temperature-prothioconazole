@@ -1,0 +1,32 @@
+# Strain: Zymoseptoria tritici IPO323 (ecZtGEM-lite; GECKO-lite placeholder kcats).
+# ORGANISM ONLY — method settings live in defaults.yaml + experiments/.
+# Built from ztGEM v0.3 (Yeast9 template, diamond-BBH orthology, AOX added as
+# r_AOX / Mycgr3G72918). See STATUS.md for what is real vs placeholder.
+provider:
+  type: gecko
+  model_file: ecZtGEM_full.xml    # full GECKO expansion (lite kept alongside)
+  prot_prefix: prot_
+  pool_id: prot_pool
+  biomass_rxn: null               # auto-detect (r_2111 growth)
+  default_Topt_offset: 7.0        # organism Topt ~24 C above T0 21 C is small; see note
+  default_dCp: -4.0
+  target_fraction: null
+  pool_scale: 1.0
+  thermal_model: unfolding             # switch to 'unfolding' once TemStaPro Tm table exists
+  ngam_temperature: false
+  ngam_reaction: r_4046
+  enzyme_params: thermal/BestParamsTopt.csv   # UNCOMMENT once TemStaPro has run
+  p_total: 0.5                    # g protein/gDW (fungal placeholder; refine)
+  sigma: 0.45
+
+T0_C: 21                          # reference temperature of kcats & our calibration
+
+temperature_grid:
+  start_C: 5
+  stop_C: 45
+  n: 41
+calibration:
+  priors:
+    dTopt_sd: 1.0    # emergent Topt already matches the measured optimum (24 C);
+                     # phase-1 could not constrain dTopt, so encode that knowledge
+                     # instead of letting the ridge drift it +11 K

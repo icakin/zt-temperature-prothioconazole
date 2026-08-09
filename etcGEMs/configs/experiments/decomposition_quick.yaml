@@ -1,0 +1,19 @@
+# Quick smoke of the H1.3 decomposition: tiny crossed grid + coarse temperature
+# grid (the grid override here is for speed, not science). Use `decomposition`
+# for real runs.
+kind: decompose
+decomposition:
+  n_allocation: 12
+  n_envelope: 12
+  seed: 1
+  allocation_params:
+    budget_scale: [0.6, 1.1]
+  envelope_params:
+    dTopt:      [-6.0, 6.0]
+    topt_scale: [0.7, 1.4]
+    dCp_scale:  [0.5, 2.0]
+# coarse grid override (overlays the strain's temperature_grid) for a fast smoke
+temperature_grid:
+  start_C: 8
+  stop_C: 60
+  n: 14

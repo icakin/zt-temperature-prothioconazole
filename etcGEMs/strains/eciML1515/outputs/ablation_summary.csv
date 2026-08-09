@@ -1,0 +1,5 @@
+ablation,Topt_C,rmax_per_h,CTmax_C,Ea_eV,R2_vs_empirical
+ablation_mmrt,37.0,0.571,75.6,0.649,0.227
+ablation_sectors_off,40.0,0.561,46.8,0.715,0.737
+ablation_sectors_Tindep,37.0,0.431,46.9,0.895,0.365
+ablation_complete,37.0,0.454,46.8,0.872,0.488

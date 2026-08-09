@@ -1,0 +1,32 @@
+solver_timeout: 10
+crit_frac: 0.05
+temperature_grid:
+  start_C: 5
+  stop_C: 53
+  n: 49
+provider:
+  type: toy
+  seed: 0
+  topt_mean_offset: 8.0
+  topt_sd: 6.0
+  dCp_mean: -8.0
+  target_fraction: 0.6
+T0_C: 30
+kind: control
+control:
+  temperatures_C: null
+  perturb:
+    Topt_K: 1.0
+    dCp_frac: 0.1
+    kcat_frac: 0.02
+  screen_top_k: 100
+  grid_refine: 4
+  descriptors:
+  - Topt_C
+  - CT_max_C
+  - niche_width_C
+  - rmax
+  - Ea_eV
+  identifiable_threshold: 0.05
+_strain: _toy
+_experiment: control

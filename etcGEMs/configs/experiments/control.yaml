@@ -1,0 +1,14 @@
+# Per-enzyme thermal control + identifiability (H1.1 / H1.2). Strain-level
+# diagnostic (no sweep). Two-stage: cheap usage screen over all enzymes, then
+# targeted finite-difference control coefficients on the top candidates.
+kind: control
+control:
+  temperatures_C: null           # null -> derive sub/opt/supra from the nominal TPC
+  perturb:
+    Topt_K: 1.0                   # +/- K step for thermal CC
+    dCp_frac: 0.1                 # +/- fractional step for dCp CC
+    kcat_frac: 0.02               # +/- fractional step for FCC (via base_cost)
+  screen_top_k: 100               # enzymes carried from Stage A into Stage B
+  grid_refine: 4                  # refine the strain TPC grid x4 (Topt_C is argmax-based)
+  descriptors: [Topt_C, CT_max_C, niche_width_C, rmax, Ea_eV]
+  identifiable_threshold: 0.05    # ident_i above this -> identifiable from growth TPC

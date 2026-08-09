@@ -1,0 +1,5 @@
+comparison,n_DE_lfc1,median_absLFC
+27_0 vs 21_0 (untreated),1576,0.487
+27_0 vs 21_2 (drug-treated),864,0.402
+27_0 vs 15_0 (untreated),1901,0.55
+27_0 vs 15_2 (drug-treated),2140,0.595

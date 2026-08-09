@@ -1,0 +1,20 @@
+# DLTKcat-calibrated envelope sweep. Identical method to `default`, but intended
+# to be run WITH the extended per-enzyme DLTKcat fits applied, i.e.
+#   etcgem sweep --strain eciML1515 --experiment dltkcat_ext \
+#       --fits strains/eciML1515/dltkcat/fits_ext.csv
+# so the nominal thermal envelope is the DLTKcat one (fitted Topt/dCp per enzyme;
+# unfitted enzymes fall back to provider.default_dCp). Output -> sweep_dltkcat_ext.
+kind: sweep
+sensitivity:
+  n_samples: 120
+  seed: 1
+  parameters:
+    dTopt:        [-6.0, 6.0]
+    topt_scale:   [0.7, 1.4]
+    dCp_scale:    [0.5, 2.0]
+    budget_scale: [0.7, 1.1]
+  groups: []
+
+# Perturb the sector-allocation axis directly (hold the measured T-dependent
+# curve off during the sweep so the allocation perturbation registers).
+allocation_from_data: null

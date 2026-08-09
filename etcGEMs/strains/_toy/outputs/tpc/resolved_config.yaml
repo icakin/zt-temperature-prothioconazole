@@ -1,0 +1,15 @@
+solver_timeout: 10
+crit_frac: 0.05
+temperature_grid:
+  start_C: 5
+  stop_C: 53
+  n: 49
+provider:
+  type: toy
+  seed: 0
+  topt_mean_offset: 8.0
+  topt_sd: 6.0
+  dCp_mean: -8.0
+  target_fraction: 0.6
+T0_C: 30
+_strain: _toy

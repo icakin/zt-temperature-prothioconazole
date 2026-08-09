@@ -1,0 +1,8 @@
+curve_id,study,medium_class,defined,temp_C,rate_per_h
+zt12129_control,project12129_physiology,YMS_sucrose,True,15.0,0.0368758887946687
+zt12129_control,project12129_physiology,YMS_sucrose,True,18.0,0.0460221219248238
+zt12129_control,project12129_physiology,YMS_sucrose,True,21.0,0.0522811542244703
+zt12129_control,project12129_physiology,YMS_sucrose,True,24.0,0.0628786503924659
+zt12129_control,project12129_physiology,YMS_sucrose,True,26.0,0.0501313605128722
+zt12129_control,project12129_physiology,YMS_sucrose,True,27.0,0.0391642222744127
+zt12129_control,project12129_physiology,YMS_sucrose,True,28.0,0.039601428755438

@@ -1,0 +1,10 @@
+marker,class,n_in_class,n_in_universe,class_size,hypergeom_p
+ABC transporters,fungicide-specific,11,44,2075,0.4039750278670959
+ABC transporters,shared,5,44,692,0.2330718237140574
+ABC transporters,heat-specific,2,44,539,0.7378019763494563
+AOX,fungicide-specific,0,1,2075,1.0
+AOX,shared,1,1,692,0.07514388098599196
+AOX,heat-specific,0,1,539,1.0
+glutathione,fungicide-specific,8,67,2075,0.991228017135183
+glutathione,shared,11,67,692,0.01065430202286992
+glutathione,heat-specific,8,67,539,0.04086049522411361

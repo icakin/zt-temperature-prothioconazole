@@ -1,0 +1,13 @@
+"comparison","n_tested","n_sig","n_up","n_down"
+"proth_at_15",9209,1922,898,1024
+"proth_at_21",9209,2194,1457,737
+"proth_at_27",8137,182,112,70
+"temp_21v15_0",7423,49,10,39
+"temp_27v15_0",9209,1398,943,455
+"temp_27v21_0",9209,1067,891,176
+"temp_21v15_2",9209,408,333,75
+"temp_27v15_2",9209,1226,861,365
+"temp_27v21_2",9209,161,71,90
+"interaction_temperature21_prothioconazole2",9030,529,402,127
+"interaction_temperature27_prothioconazole2",7780,896,531,365
+"interaction_LRT_any",9209,1076,606,470

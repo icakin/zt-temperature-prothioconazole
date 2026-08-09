@@ -1,0 +1,26 @@
+# Offline smoke-test "strain": e_coli_core with synthetic enzyme kinetics.
+# Needs no model file (the toy provider builds it from cobrapy's bundled model),
+# so there is no model/ folder. Run with no experiment (build/tpc/fba) or with a
+# small sweep experiment (e.g. --experiment quick).
+provider:
+  type: toy
+  seed: 0
+  topt_mean_offset: 8.0   # enzyme optima sit ~8 K above T0 on average
+  topt_sd: 6.0            # spread of optima across enzymes
+  dCp_mean: -8.0          # kJ/mol/K, MMRT curvature
+  target_fraction: 0.6    # calibrate budget so growth is enzyme-limited
+
+T0_C: 30                  # reference temperature of the kcats
+
+temperature_grid:
+  start_C: 5
+  stop_C: 53
+  n: 49
+
+proteome_sectors:
+  enabled: false
+  P_total: null
+  f_metab: 0.5
+  f_maint: 0.15
+  atpm_reaction: ATPM        # e_coli_core has a maintenance-ATP reaction
+  translation_coeff: auto

@@ -1,0 +1,19 @@
+# Fast smoke of posterior-mode calibrated thermal sampling (M1.2): a handful of
+# per-enzyme envelope draws from strains/<name>/dltkcat/fits.csv + coarse grid.
+kind: sweep
+sensitivity:
+  n_samples: 6
+  seed: 1
+  parameters:
+    budget_scale: [0.9, 1.1]
+  groups: []
+envelope_sampling:
+  mode: posterior
+  shared_fraction: 0.7
+  topt_sd_K: 4.0
+  dcp_sd_frac: 0.3
+  posterior_from: dltkcat
+temperature_grid:
+  start_C: 8
+  stop_C: 60
+  n: 21

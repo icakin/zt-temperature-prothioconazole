@@ -1,0 +1,10 @@
+set,contrast,n,mean_lfc,n_padj05
+P450 reductase (CPR),drug15,3,0.8449386190551217,2
+P450 reductase (CPR),drug21,3,0.9682519046511683,2
+P450 reductase (CPR),drug27,3,0.2343570838975543,0
+Heme biosynthesis (map00860),drug15,20,-0.12530750619667463,12
+Heme biosynthesis (map00860),drug21,20,-0.04813543975506497,10
+Heme biosynthesis (map00860),drug27,20,0.005916087617804389,3
+NADPH generation,drug15,5,0.3095792435229793,3
+NADPH generation,drug21,5,0.0993147829240194,4
+NADPH generation,drug27,5,-0.012924331004372203,1

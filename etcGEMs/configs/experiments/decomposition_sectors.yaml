@@ -1,0 +1,28 @@
+# Sector-based H1.3 allocation-vs-envelope decomposition.
+#
+# The allocation axis here is the MECHANISTIC proteome-sector split
+# (f_metab/f_maint, Basan/Scott) rather than a single scalar budget_scale, so the
+# H1.3 separability claim rests on real allocation degrees of freedom instead of a
+# by-construction scalar axis. The ANOVA/Shapley math is unchanged; only the
+# allocation parameters differ. Requires sectors active for this run: the
+# experiment-level proteome_sectors override below merges onto the strain (which
+# stays disabled at baseline) and build_provider activates sectors for the run.
+kind: decompose
+proteome_sectors:
+  enabled: true
+  atpm_reaction: null            # null -> auto-detect ATPM / NGAM
+decomposition:
+  n_allocation: 16
+  n_envelope: 16
+  seed: 1
+  allocation_params:                # brackets the measured 30 C nominal (0.285/0.374)
+    f_metab: [0.20, 0.40]          # metabolic-enzyme sector (mechanistic allocation)
+    f_maint: [0.28, 0.48]          # maintenance sector (f_bio = 1 - f_metab - f_maint)
+  envelope_params:
+    dTopt:      [-6.0, 6.0]      # per-enzyme thermal envelope (genome-set)
+    topt_scale: [0.7, 1.4]
+    dCp_scale:  [0.5, 2.0]
+
+# Perturb the sector-allocation axis directly (hold the measured T-dependent
+# curve off during the sweep so the allocation perturbation registers).
+allocation_from_data: null

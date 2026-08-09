@@ -1,0 +1,40 @@
+solver_timeout: 10
+crit_frac: 0.05
+temperature_grid:
+  start_C: 5
+  stop_C: 60
+  n: 56
+provider:
+  type: gecko
+  model_file: eciML1515_batch.xml
+  prot_prefix: prot_
+  pool_id: prot_pool
+  biomass_rxn: null
+  default_Topt_offset: 7.0
+  default_dCp: -4.0
+  target_fraction: null
+  pool_scale: 1.0
+  thermal_model: unfolding
+  ngam_temperature: true
+  ngam_reaction: ATPM
+  enzyme_params: thermal/BestParamsTopt.csv
+  dcp_from: prior
+  dcp_prior_kJ: -4.0
+  dltkcat_fits: dltkcat/fits_ext.csv
+  p_total: 0.5
+  sigma: 0.45
+  model_path: /Users/g.yvon-durocher/Library/CloudStorage/OneDrive-UniversityofExeter/Documents/work/MICROADAPT/etcGEMs/strains/eciML1515/model/eciML1515_batch.xml
+T0_C: 30
+proteome_sectors:
+  enabled: true
+  P_total: null
+  f_metab: 0.483
+  f_maint: 0.326
+  atpm_reaction: null
+  translation_coeff: auto
+  biosynthesis_growth_law: false
+  growth_law_slope: 0.33
+  growth_law_f_bio0: 0.045
+allocation_from_data: proteomics/tem_proteomic.csv
+default_medium_proteome: Glucose
+_strain: eciML1515

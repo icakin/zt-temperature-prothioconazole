@@ -1,0 +1,18 @@
+# Quick smoke of the control/identifiability analysis: few candidates + coarse
+# TPC grid (grid override is for speed, not science). Use `control` for real runs.
+kind: control
+control:
+  temperatures_C: null
+  perturb:
+    Topt_K: 1.0
+    dCp_frac: 0.1
+    kcat_frac: 0.02
+  screen_top_k: 15
+  grid_refine: 1                  # no refinement (coarse smoke; Topt CC will be degenerate)
+  descriptors: [Topt_C, CT_max_C, niche_width_C, rmax, Ea_eV]
+  identifiable_threshold: 0.05
+# coarse grid override for a fast smoke (overlays the strain temperature_grid)
+temperature_grid:
+  start_C: 8
+  stop_C: 60
+  n: 21

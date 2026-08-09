@@ -1,0 +1,118 @@
+{
+  "operating_point": "tuned model (v3 posterior medians), rich BHI, growth law ON, reconciled pool",
+  "tuned_medians": {
+    "dTopt": 2.7076,
+    "topt_scale": 0.9613,
+    "dCp_scale": 1.2002,
+    "dTm": -5.5801,
+    "tm_scale": 1.0067,
+    "kcat_scale": 1.2462,
+    "kappa_scale": 1.0949,
+    "sigma": 0.8669,
+    "f_metab": 0.2807,
+    "f_maint": 0.3408,
+    "ngam_scale": 0.9946,
+    "ngam_steepness": 0.9802,
+    "sigma_disc": 0.2016
+  },
+  "closed_reactions": [
+    "CU1Opp",
+    "MOX",
+    "QMO2No1",
+    "QMO3No1"
+  ],
+  "tpc_descriptors": {
+    "with_closure": {
+      "rmax": 2.1557848580877668,
+      "Topt_C": 39.0,
+      "Ea_eV": 0.9095252247945371,
+      "CTmax_C": 45.968917517441625
+    },
+    "without_closure": {
+      "rmax": 2.1608621581615335,
+      "Topt_C": 39.0,
+      "Ea_eV": 0.9111684492436855,
+      "CTmax_C": 45.969007776708224
+    },
+    "delta": {
+      "rmax": -0.0051,
+      "Topt_C": 0.0,
+      "Ea_eV": -0.0016,
+      "CTmax_C": -0.0001
+    }
+  },
+  "rmax_growth_delta_pct": -0.235,
+  "at_optimal_T_C": 39.0,
+  "o2_audit": {
+    "without_closure": {
+      "growth": 2.160862158161534,
+      "o2_uptake_exchange": 49.5306,
+      "gross_metabolic_o2_consumption": 198.1021,
+      "futile_cycle_ratio_gross_over_uptake": 4.0,
+      "QMO2+QMO3_flux": 99.0504,
+      "CYTBO3_flux": 0.0,
+      "CYTBD_flux": 0.0,
+      "top_o2_consumers": [
+        [
+          "QMO3No1",
+          186.3629
+        ],
+        [
+          "QMO2No1",
+          11.738
+        ],
+        [
+          "PPPGONo1",
+          0.0007
+        ],
+        [
+          "OPHHXyNo1",
+          0.0005
+        ]
+      ]
+    },
+    "with_closure": {
+      "growth": 2.155784858087766,
+      "o2_uptake_exchange": 1.3141,
+      "gross_metabolic_o2_consumption": 1.3141,
+      "futile_cycle_ratio_gross_over_uptake": 1.0,
+      "QMO2+QMO3_flux": 0.0,
+      "CYTBO3_flux": 0.0,
+      "CYTBD_flux": 2.609,
+      "top_o2_consumers": [
+        [
+          "CYTBD2ppNo1",
+          1.0978
+        ],
+        [
+          "arm_CYTBDpp",
+          0.2067
+        ],
+        [
+          "AACTOOR",
+          0.0084
+        ],
+        [
+          "PPPGONo1",
+          0.0007
+        ],
+        [
+          "OPHHXyNo1",
+          0.0005
+        ]
+      ]
+    }
+  },
+  "growth_at_Topt_delta_pct": -0.235,
+  "emergent_validation_corrected": {
+    "rmax": 1.034,
+    "Topt_C": 40.0,
+    "Ea_eV": 0.654,
+    "CTmax_C": 51.7,
+    "report_ref": {
+      "rmax": 1.04,
+      "Topt_C": 40.5,
+      "Ea_eV": 0.63
+    }
+  }
+}

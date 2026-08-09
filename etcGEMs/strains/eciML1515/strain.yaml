@@ -1,0 +1,63 @@
+# Strain: enzyme-constrained E. coli iML1515 (GECKO batch). ORGANISM ONLY.
+# The CLI injects provider.model_path (strains/eciML1515/model/<model_file>) and
+# output_dir at run time. Method settings (sensitivity, solver_timeout, crit_frac)
+# live in defaults.yaml + experiments/, not here.
+provider:
+  type: gecko
+  model_file: eciML1515_batch.xml   # file under strains/eciML1515/model/
+  prot_prefix: prot_
+  pool_id: prot_pool          # auto-detects prot_pool[c]
+  biomass_rxn: null           # auto-detect from objective
+  default_Topt_offset: 7.0    # enzyme Topt above T0 (K) -> organism optimum ~37 C (mmrt fallback)
+  default_dCp: -4.0           # mmrt-mode fallback only (unused in unfolding); literature MMRT value, NOT an Ea target
+  target_fraction: null       # null -> reuse the model's own pool bound
+  pool_scale: 1.0             # DEPRECATED tuning knob; 1.0 = nothing tuned to the growth curve
+  # Thermal model. `unfolding` = two-state native<->denatured (Li 2021 / MRes):
+  # per-enzyme Tm sets the high-T collapse (falling limb) so breadth/CTmax decouple
+  # from the rising-limb Ea. `mmrt` = the peak-normalised MMRT-only path (default).
+  thermal_model: unfolding
+  ngam_temperature: true      # temperature-dependent maintenance (unfolding only)
+  ngam_reaction: ATPM
+  enzyme_params: thermal/BestParamsTopt.csv   # grounded per-enzyme Topt/Tm (Li-Engqvist/Leuenberger)
+  dcp_from: prior             # per-enzyme dCp from an independent literature MMRT prior (+DLTKcat), NOT the tuned table
+  dcp_prior_kJ: -4.0          # literature MMRT dCp prior (Hobbs 2013 range); Ea EMERGES, not fitted
+  dltkcat_fits: dltkcat/fits_ext.csv          # DLTKcat per-enzyme Topt/dCp where fits exist
+  # EMERGENT magnitude: pool budget = P_total x f_metab x sigma (all independent):
+  p_total: 0.5               # total protein per gDW (g/gDW), E. coli literature
+  sigma: 0.45                # average in-vivo enzyme saturation (Davidi 2016 / Heckmann 2020; ~0.4-0.5)
+
+T0_C: 30
+
+temperature_grid:
+  start_C: 5                  # unfolding CTmax ~47C (Tm-set); grid need not extend high
+  stop_C: 60
+  n: 56
+
+# COMPLETE MODEL: coarse-grained proteome sectors (Basan/Scott) ENABLED. The nominal
+# split is SET FROM the measured Glucose-minimal 30 C E. coli proteome (Wang 2026;
+# the model's default medium): f_metab 0.483, f_bio 0.191, f_chaperone 0.057,
+# f_other 0.269 -> model sectors f_metab=0.483, f_maint=chaperone+other=0.326,
+# f_bio=1-both=0.191. The MEASURED, MEDIUM-MATCHED per-medium curve (below) then sets
+# the T- and medium-dependent split (LB has higher f_bio -> higher ribosome cap).
+proteome_sectors:
+  enabled: true
+  P_total: null              # null -> backed out from the pool bound given f_metab
+  f_metab: 0.483             # metabolic-enzyme sector (measured Glucose 30 C)
+  f_maint: 0.326             # maintenance = chaperone + other (measured Glucose 30 C)
+  atpm_reaction: null        # null -> auto-detect ATPM / NGAM
+  translation_coeff: auto    # auto -> co-limit translation cap + pool at nominal, T0
+  # Coupled bacterial growth law (Scott et al. 2010, Science 330:1099): the
+  # biosynthesis/ribosome fraction rises linearly with growth rate and the metabolic
+  # fraction falls by the SAME slope (proteome-conserving). OFF by default (keeps the
+  # fixed measured partition for comparison). slope in mass-fraction per (1/h),
+  # ~1/kappa_t with kappa_t~4.5/h (Scott 2010).
+  biosynthesis_growth_law: false
+  growth_law_slope: 0.33      # ~1/kappa_t; just below translation_coeff/P_total so the
+                              # biosynthesis cap relaxes and the coupled metabolic sector binds
+  growth_law_f_bio0: 0.045    # mu=0 ribosome/biosynthesis floor (Scott 2010 phi_R,min)
+
+# Measured MEDIUM-MATCHED temperature-dependent sector allocation: the sector split
+# follows the measured per-medium f_sector(T) curve (LB / Glucose / Glycerol),
+# selected by set_medium; interpolated per temperature within each medium's range.
+allocation_from_data: proteomics/tem_proteomic.csv
+default_medium_proteome: Glucose   # default medium's sector fractions (glucose minimal)

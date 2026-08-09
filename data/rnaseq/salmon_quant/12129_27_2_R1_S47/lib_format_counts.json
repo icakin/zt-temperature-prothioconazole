@@ -1,0 +1,13 @@
+{
+  "read_files": [
+    "01_reads/12129_27_2_R1_S47_R1_001.fastq.gz",
+    "01_reads/12129_27_2_R1_S47_R2_001.fastq.gz"
+  ],
+  "expected_format": "ISR",
+  "compatible_fragment_ratio": 1.0,
+  "num_compatible_fragments": 6392204,
+  "num_assigned_fragments": 6392204,
+  "num_frags_with_concordant_consistent_mappings": 5802602,
+  "num_frags_with_inconsistent_or_orphan_mappings": 589602,
+  "strand_mapping_bias": 0.0
+}

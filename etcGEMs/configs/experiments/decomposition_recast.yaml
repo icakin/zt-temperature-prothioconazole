@@ -1,0 +1,29 @@
+# RECAST H1.3 decomposition: range-fair, nominal-centred, magnitude-aware, +Tm.
+#
+# Supersedes decomposition_sectors.yaml. Every parameter -- allocation AND
+# envelope -- is moved by the SAME standardised relative half-width H about the
+# MEASURED NOMINAL (multiplicative -> nominal*(1 +/- H); additive dTopt/dTm ->
+# +/- H*sd(per-enzyme Topt/Tm); sector fractions -> nominal*(1 +/- H) with
+# biosynthesis renormalised). The envelope axis now includes dTm and is split into
+# a KINETIC sub-group {dTopt, topt_scale, dCp_scale} and a STABILITY sub-group
+# {dTm} by a fully-crossed 3-way (allocation x kinetic x stability) functional
+# ANOVA, which yields BOTH the 2-group allocation-vs-envelope Shapley and the
+# 3-group allocation/kinetic/stability Shapley in one design. Alongside the
+# variance shares it reports the achievable IQR / range of each descriptor when
+# each axis alone is perturbed, so a large share on a negligible movement can no
+# longer masquerade as importance.
+#
+# The old decomposition_sectors.yaml (unequal ranges, off-nominal f_metab
+# 0.20-0.40, no Tm, shares-only) is retained but SUPERSEDED by this one.
+kind: decompose
+proteome_sectors:
+  enabled: true
+  atpm_reaction: null            # null -> auto-detect ATPM / NGAM
+allocation_from_data: null       # hold the measured T-curve off so allocation is perturbable
+recast:
+  H: 0.2                         # standardised relative half-width (all axes, nominal-centred)
+  n_allocation: 10               # LHS draws over {f_metab, f_maint}
+  n_kinetic: 8                   # LHS draws over {dTopt, topt_scale, dCp_scale}
+  n_stability: 6                 # LHS draws over {dTm}
+  n_band: 41                     # marginal-ensemble draws per axis (IQR bands + magnitude)
+  seed: 1

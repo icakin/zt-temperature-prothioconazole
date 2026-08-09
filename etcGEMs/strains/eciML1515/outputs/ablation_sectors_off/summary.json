@@ -1,0 +1,8 @@
+{
+  "ablation": "ablation_sectors_off",
+  "Topt_C": 40.0,
+  "rmax_per_h": 0.561,
+  "CTmax_C": 46.8,
+  "Ea_eV": 0.715,
+  "R2_vs_empirical": 0.737
+}

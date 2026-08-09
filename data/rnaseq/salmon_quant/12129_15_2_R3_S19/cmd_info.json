@@ -1,0 +1,15 @@
+{
+  "salmon_version": "2.1.2",
+  "index": "reference/salmon_index",
+  "libType": "A",
+  "output": "results/02_quant/12129_15_2_R3_S19",
+  "mates1": [
+    "01_reads/12129_15_2_R3_S19_R1_001.fastq.gz"
+  ],
+  "mates2": [
+    "01_reads/12129_15_2_R3_S19_R2_001.fastq.gz"
+  ],
+  "unmatedReads": [],
+  "threads": 4,
+  "sketch": false
+}

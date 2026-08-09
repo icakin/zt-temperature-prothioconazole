@@ -1,0 +1,105 @@
+{
+  "operating_point": "rich (BHI), growth law ON, reconciled single pool; TUNED (v3 medians)",
+  "h": 0.1,
+  "H": 0.2,
+  "tuned_medians": {
+    "dTopt": 2.7076,
+    "topt_scale": 0.9613,
+    "dCp_scale": 1.2002,
+    "dTm": -5.5801,
+    "tm_scale": 1.0067,
+    "kcat_scale": 1.2462,
+    "kappa_scale": 1.0949,
+    "sigma": 0.8669,
+    "f_metab": 0.2807,
+    "f_maint": 0.3408,
+    "ngam_scale": 0.9946,
+    "ngam_steepness": 0.9802,
+    "sigma_disc": 0.2016
+  },
+  "baseline_descriptors": {
+    "Topt_C": 39.0,
+    "rmax": 2.1609,
+    "CTmin_C": 13.8989,
+    "CTmax_C": 45.969,
+    "niche_width_C": 32.0701,
+    "B80_C": 13.6965,
+    "Ea_eV": 0.9112,
+    "Ea_kJmol": 87.9141,
+    "skewness": -0.5048
+  },
+  "variance_shares": {
+    "Topt_C": {
+      "phi_envelope": 0.9988530101,
+      "phi_magnitude": 0.0011469899,
+      "S_envelope": 0.9977977794,
+      "S_magnitude": 9.17592e-05,
+      "S_interaction": 0.0021104614
+    },
+    "rmax": {
+      "phi_envelope": 0.0771367325,
+      "phi_magnitude": 0.9228632675,
+      "S_envelope": 0.0765246897,
+      "S_magnitude": 0.9222512247,
+      "S_interaction": 0.0012240855
+    },
+    "CTmax_C": {
+      "phi_envelope": 0.9937643921,
+      "phi_magnitude": 0.0062356079,
+      "S_envelope": 0.9933611567,
+      "S_magnitude": 0.0058323726,
+      "S_interaction": 0.0008064707
+    },
+    "niche_width_C": {
+      "phi_envelope": 0.9903287192,
+      "phi_magnitude": 0.0096712808,
+      "S_envelope": 0.9901129488,
+      "S_magnitude": 0.0094555105,
+      "S_interaction": 0.0004315408
+    },
+    "Ea_eV": {
+      "phi_envelope": 0.9705759868,
+      "phi_magnitude": 0.0294240132,
+      "S_envelope": 0.9646152842,
+      "S_magnitude": 0.0234633106,
+      "S_interaction": 0.0119214052
+    }
+  },
+  "iqr_magnitude": {
+    "Topt_C": {
+      "kinetic": 0.0,
+      "stability": 2.0,
+      "allocation": 0.0,
+      "catalysis": 0.0,
+      "maintenance": 0.0
+    },
+    "rmax": {
+      "kinetic": 0.0864971698,
+      "stability": 0.0703828774,
+      "allocation": 0.2375146637,
+      "catalysis": 0.3245960526,
+      "maintenance": 0.0020628818
+    },
+    "CTmax_C": {
+      "kinetic": 0.0188571047,
+      "stability": 1.8755422153,
+      "allocation": 0.0213167935,
+      "catalysis": 0.0346673101,
+      "maintenance": 0.0003069183
+    },
+    "niche_width_C": {
+      "kinetic": 6.454231353,
+      "stability": 1.7553605225,
+      "allocation": 0.3520677732,
+      "catalysis": 0.6491710865,
+      "maintenance": 0.041080877
+    },
+    "Ea_eV": {
+      "kinetic": 0.2777969139,
+      "stability": 0.0449106804,
+      "allocation": 0.0514461456,
+      "catalysis": 0.071806846,
+      "maintenance": 0.0023210481
+    }
+  }
+}

@@ -1,0 +1,11 @@
+"comparison","name","n_sig","n_bg","enrichment","padj"
+"interaction_LRT_any","Steroid biosynthesis",3,24,1.04950495049505,0.999951000978797
+"interaction_temperature21_prothioconazole2","Steroid biosynthesis",2,24,1.96884735202492,0.823012536077341
+"interaction_temperature27_prothioconazole2","Steroid biosynthesis",2,24,0.715827338129496,0.999460849422621
+"proth_at_15C_2vs0","Steroid biosynthesis",5,24,0.953237410071942,0.999999904650467
+"proth_at_21C_2vs0","Steroid biosynthesis",5,24,0.929824561403509,0.999994722056734
+"temp_21vs15_proth2","Steroid biosynthesis",1,24,2,0.522459352988873
+"temp_27vs15_proth0","Steroid biosynthesis",1,24,0.42741935483871,0.999934755597723
+"temp_27vs15_proth2","Steroid biosynthesis",3,24,1.54368932038835,0.755922197134669
+"temp_27vs21_proth0","Steroid biosynthesis",1,24,0.706666666666667,0.947955621183315
+"temp_27vs21_proth2","Steroid biosynthesis",1,24,4.24,0.340842917804398

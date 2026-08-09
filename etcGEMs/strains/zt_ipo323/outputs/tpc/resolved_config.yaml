@@ -1,0 +1,27 @@
+solver_timeout: 10
+crit_frac: 0.05
+close_free_o2_sinks: true
+temperature_grid:
+  start_C: 5
+  stop_C: 45
+  n: 41
+provider:
+  type: gecko
+  model_file: ecZtGEM_full.xml
+  prot_prefix: prot_
+  pool_id: prot_pool
+  biomass_rxn: null
+  default_Topt_offset: 7.0
+  default_dCp: -4.0
+  target_fraction: null
+  pool_scale: 1.0
+  thermal_model: unfolding
+  ngam_temperature: false
+  ngam_reaction: r_4046
+  enzyme_params: thermal/BestParamsTopt.csv
+  p_total: 0.5
+  sigma: 0.45
+  model_path: /Users/ilgazcakin/Desktop/X0123 copy/etcGEMs/strains/zt_ipo323/model/ecZtGEM_full.xml
+T0_C: 21
+_strain: zt_ipo323
+closed_free_o2_sinks: []

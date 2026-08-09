@@ -1,0 +1,26 @@
+# Proteome-sector allocation sweep (requires the strain to enable
+# proteome_sectors). Sweeps the metabolic<->biosynthesis split at (mostly) fixed
+# maintenance, plus a maintenance band, so B0 becomes an allocation trade-off
+# with an interior optimum. NOTE: enable sectors in the strain first, e.g.
+#   proteome_sectors: {enabled: true, ...}
+kind: sweep
+# Activate sectors for THIS run only (merges onto the strain's proteome_sectors,
+# which stays disabled at baseline). The CLI reads the merged config in
+# build_provider, so this experiment-level override turns sectors on here without
+# touching strain.yaml.
+proteome_sectors:
+  enabled: true
+  atpm_reaction: null
+sensitivity:
+  n_samples: 120
+  seed: 1
+  parameters:
+    f_metab: [0.20, 0.58]     # metabolic-enzyme fraction: spans the interior rmax optimum (~0.26) and the strain nominal (glucose-minimal 0.483)
+    f_maint: [0.26, 0.36]     # maintenance fraction (brackets the nominal 0.326; f_bio = 1 - f_metab - f_maint stays > 0)
+    dTopt:   [-6.0, 6.0]      # envelope knobs still available alongside
+    dCp_scale: [0.5, 2.0]
+  groups: []
+
+# Perturb the sector-allocation axis directly (hold the measured T-dependent
+# curve off during the sweep so the allocation perturbation registers).
+allocation_from_data: null

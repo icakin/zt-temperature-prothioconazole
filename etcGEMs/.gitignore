@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+
+# Virtual environments
+.venv/
+**/.venv/
+
+# OS
+.DS_Store
+
+# Editor / harness local settings
+.claude/settings.local.json
+
+# External vendored clone (has its own git history + heavy torch venv)
+/DLTKcat/
+
+# Run checkpoints
+**/_checkpoint.npz
+
+# Quarto report render output (keep .qmd, header.tex, refs, csl, assemble.py, assets)
+reports/ecoli_tpc/_output/
+.quarto/
+**/.quarto/
+refs/
+
+# Transient / local artifacts (FUSE temp files, editor backups, verify logs)
+.fuse_hidden*
+*.bak*
+verify_*.log
+
+/tpc_pipeline/
+collaborator_email_draft.md
+/strains/eciML1515/outputs/_archive/

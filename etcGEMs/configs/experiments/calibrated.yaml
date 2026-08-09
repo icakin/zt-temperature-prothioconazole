@@ -1,0 +1,17 @@
+# Calibrated / correlated thermal-envelope uncertainty (M1.2). The envelope is
+# sampled per-enzyme with a one-factor correlation (shared_fraction = rho) instead
+# of the global dTopt/topt_scale knobs; a small allocation band is still swept.
+# Set mode: posterior to draw per-enzyme mean+sd from strains/<name>/dltkcat/fits.csv.
+kind: sweep
+sensitivity:
+  n_samples: 120
+  seed: 1
+  parameters:
+    budget_scale: [0.9, 1.1]     # small allocation band alongside the sampled envelope
+  groups: []
+envelope_sampling:
+  mode: correlated               # knobs | correlated | posterior
+  shared_fraction: 0.7           # rho: 1 -> coherent whole-proteome shift; 0 -> independent
+  topt_sd_K: 4.0                 # per-enzyme Topt sd (correlated / posterior fallback)
+  dcp_sd_frac: 0.3               # per-enzyme dCp sd as a fraction of |dCp|
+  posterior_from: dltkcat        # posterior mode -> strains/<name>/dltkcat/fits.csv

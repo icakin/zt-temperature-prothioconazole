@@ -1,0 +1,30 @@
+# Template for a real GECKO ecModel (e.g. ecYeastGEM). Fill in model_path.
+provider:
+  type: gecko
+  model_path: /path/to/ecYeastGEM.xml   # SBML / .mat / .json
+  prot_prefix: prot_                     # enzyme pseudo-metabolite id prefix
+  pool_id: prot_pool                     # protein pool metabolite id
+  biomass_rxn: null                      # null -> auto-detect from objective
+  default_Topt_offset: 8.0               # assumed enzyme Topt above T0 (K)
+  default_dCp: -8.0                      # assumed MMRT curvature
+  target_fraction: null                  # null -> reuse the model's pool bound
+
+T0_C: 30
+
+temperature_grid:
+  start_C: 5
+  stop_C: 45
+  n: 41
+
+sensitivity:
+  n_samples: 300
+  seed: 1
+  parameters:
+    dTopt:        [-6.0, 6.0]
+    topt_scale:   [0.7, 1.3]
+    dCp_scale:    [0.5, 2.0]
+    budget_scale: [0.8, 1.2]
+  groups: []
+
+crit_frac: 0.05
+output_dir: outputs/yeast_run

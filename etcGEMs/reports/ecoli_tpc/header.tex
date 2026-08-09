@@ -1,0 +1,42 @@
+\usepackage{lineno}
+\linenumbers
+\usepackage{float}
+% Keep each section's figures/tables within that section (prevents floats from
+% piling up across sections, which with lineno can stop the layout converging and
+% drop surrounding text). A FloatBarrier is inserted at every section boundary.
+\usepackage[section]{placeins}
+
+% Encourage figure placement near reference point, reduce white space
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\bottomfraction}{0.8}
+\renewcommand{\textfraction}{0.1}
+\renewcommand{\floatpagefraction}{0.8}
+\setcounter{topnumber}{3}
+\setcounter{bottomnumber}{3}
+\setcounter{totalnumber}{5}
+
+\usepackage{caption}
+\DeclareCaptionLabelSeparator{bar}{\textbf{\enspace\textbar\enspace}}
+\captionsetup[figure]{labelsep=bar, labelfont=bf}
+
+% --- Custom title block ---
+% Quarto overrides \figurename after \begin{document}, so redefine \@maketitle
+% to render our own author/affiliation block and fix \figurename at \maketitle.
+\makeatletter
+\renewcommand{\@maketitle}{%
+  \gdef\figurename{Fig.}%
+  \newpage
+  \null
+  \vskip 2em%
+  \begin{center}%
+    {\LARGE \@title \par}%
+    \vskip 1.5em%
+    {\normalsize Gabriel Yvon-Durocher\par}%
+    \vskip 0.4em%
+    {\small\itshape Living Systems Institute, University of Exeter, Stocker Road, Exeter EX4 4QD, UK\par}%
+    \vskip 0.6em%
+    {\footnotesize \@date\par}%
+  \end{center}%
+  \par
+  \vskip 1.5em}
+\makeatother

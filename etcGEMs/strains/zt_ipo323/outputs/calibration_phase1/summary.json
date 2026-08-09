@@ -1,0 +1,160 @@
+{
+  "strain": "zt_ipo323",
+  "curve": {
+    "curve_id": "zt12129_control",
+    "study": "project12129_physiology",
+    "medium_class": "YMS_sucrose",
+    "defined": true,
+    "n": 7,
+    "temp_min_C": 15.0,
+    "temp_max_C": 28.0,
+    "obs_rmax": 0.0628786503924659,
+    "obs_Topt_C": 24.0,
+    "units": "1/h"
+  },
+  "medium": "glucose_minimal",
+  "sampler": {
+    "n_walkers": 24,
+    "n_steps": 1000,
+    "burn": 300,
+    "thin": 36,
+    "acceptance_fraction": 0.447,
+    "autocorr_time": [
+      55.9,
+      73.8,
+      56.2,
+      56.6,
+      50.6
+    ],
+    "autocorr_time_max": 73.8,
+    "n_eff": 227.8,
+    "wall_time_s": 13512.5,
+    "n_proc": 6,
+    "seed": 1
+  },
+  "priors": {
+    "dTopt": {
+      "dist": "normal",
+      "loc": 0.0,
+      "scale": 1.0,
+      "note": "per-enzyme Topt SD (4.25 K); optimum-prediction spread"
+    },
+    "dTm": {
+      "dist": "normal",
+      "loc": 0.0,
+      "scale": 6.13,
+      "note": "per-enzyme Tm SD (6.13 K); melting-proteome prediction error"
+    },
+    "dCp_scale": {
+      "dist": "lognormal",
+      "log_loc": 0.0,
+      "log_scale": 0.3,
+      "note": "MMRT curvature multiplier ~ LogNormal about 1 (sd 0.30 on log)"
+    },
+    "kappa_scale": {
+      "dist": "lognormal",
+      "log_loc": 0.0,
+      "log_scale": 0.7,
+      "note": "in-vivo translation efficiency ~ LogNormal about 1 (sd 0.70 on log ~ up to ~4x either way); broad/uncertain"
+    },
+    "sigma_noise": {
+      "dist": "halfnormal",
+      "scale": 0.02,
+      "note": "Gaussian residual sd on absolute rate (1/h); weakly-informative from data scatter"
+    },
+    "bounds": {
+      "dTopt": [
+        -12.0,
+        12.0
+      ],
+      "dTm": [
+        -15.0,
+        15.0
+      ],
+      "dCp_scale": [
+        0.25,
+        4.0
+      ],
+      "kappa_scale": [
+        0.05,
+        20.0
+      ],
+      "sigma_noise": [
+        0.0001,
+        2.0
+      ]
+    }
+  },
+  "posterior": {
+    "dTopt": {
+      "prior_center": 0.0,
+      "posterior_median": 1.1104,
+      "posterior_90CI": [
+        -0.7834,
+        2.6391
+      ],
+      "constrained_by_curve": false,
+      "demanded_correction": "+1.1 K"
+    },
+    "dTm": {
+      "prior_center": 0.0,
+      "posterior_median": -14.1286,
+      "posterior_90CI": [
+        -14.9628,
+        -10.9879
+      ],
+      "constrained_by_curve": true,
+      "demanded_correction": "-14.1 K"
+    },
+    "dCp_scale": {
+      "prior_center": 1.0,
+      "posterior_median": 1.5031,
+      "posterior_90CI": [
+        0.8612,
+        2.5183
+      ],
+      "constrained_by_curve": false,
+      "demanded_correction": "x1.50"
+    },
+    "kappa_scale": {
+      "prior_center": 1.0,
+      "posterior_median": 0.922,
+      "posterior_90CI": [
+        0.3121,
+        2.9905
+      ],
+      "constrained_by_curve": false,
+      "demanded_correction": "x0.92"
+    },
+    "sigma_noise": {
+      "prior_center": null,
+      "posterior_median": 0.0579,
+      "posterior_90CI": [
+        0.0423,
+        0.0774
+      ],
+      "constrained_by_curve": null,
+      "demanded_correction": "0.058 1/h"
+    }
+  },
+  "descriptors": {
+    "observed": {
+      "rmax": 0.063,
+      "Topt_C": 24.0,
+      "Ea_eV": 0.425,
+      "CTmax_C": 28.0
+    },
+    "prior": {
+      "rmax": 0.216,
+      "Topt_C": 24.0,
+      "Ea_eV": 0.527,
+      "CTmax_C": 37.4
+    },
+    "posterior_median": {
+      "rmax": 0.185,
+      "Topt_C": 20.5,
+      "Ea_eV": 0.917,
+      "CTmax_C": 23.3
+    }
+  }
+}

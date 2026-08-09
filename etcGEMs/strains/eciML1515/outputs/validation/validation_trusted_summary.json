@@ -1,0 +1,24 @@
+{
+  "vanderlinden_bhi": {
+    "study": "Van Derlinden & Van Impe 2012 (Int J Food Microbiol 158:73-78)",
+    "strain": "E. coli K-12 MG1655 (CGSC #6300)",
+    "medium": "BHI",
+    "digitized": true,
+    "n": 17,
+    "T_range_C": [
+      7.0,
+      46.0
+    ],
+    "abs_R2": 0.265,
+    "RMSE_per_h": 0.705,
+    "obs_rmax": 2.403,
+    "pred_rmax": 1.037,
+    "obs_Topt_C": 40.0,
+    "pred_Topt_C": 40.5,
+    "obs_CTmax_C": 45.9,
+    "pred_CTmax_C": 51.5,
+    "obs_Ea_eV": 0.643,
+    "pred_Ea_eV": 0.63,
+    "role": "primary"
+  }
+}

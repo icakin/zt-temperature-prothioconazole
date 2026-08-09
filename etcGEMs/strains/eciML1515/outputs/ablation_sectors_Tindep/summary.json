@@ -1,0 +1,8 @@
+{
+  "ablation": "ablation_sectors_Tindep",
+  "Topt_C": 37.0,
+  "rmax_per_h": 0.431,
+  "CTmax_C": 46.9,
+  "Ea_eV": 0.895,
+  "R2_vs_empirical": 0.365
+}

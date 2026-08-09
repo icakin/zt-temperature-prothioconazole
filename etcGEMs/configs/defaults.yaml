@@ -1,0 +1,18 @@
+# Universal METHOD defaults (project-wide). Organism biophysics lives in
+# strains/<name>/strain.yaml; method overlays in experiments/<name>.yaml.
+# Merge precedence when composing a run: defaults <- strain <- experiment.
+solver_timeout: 10        # seconds; caps any single LP solve
+crit_frac: 0.05           # growth fraction defining CTmin / CTmax
+
+# Model-quality correction (Parsa's gas-flux audit): close the four uncosted
+# O2-consuming side reactions (QMO2, QMO3, MOX, CU1Opp) that short-circuit the
+# electron transport chain with a futile O2 cycle, so O2 routes through the real
+# enzyme-costed cytochrome oxidase. ~-0.3% growth; TPC essentially unchanged.
+# Reversible: set false to restore the raw ecModel behaviour.
+close_free_o2_sinks: true
+
+# Fallback temperature grid, used only if a strain does not define its own.
+temperature_grid:
+  start_C: 5
+  stop_C: 55
+  n: 51

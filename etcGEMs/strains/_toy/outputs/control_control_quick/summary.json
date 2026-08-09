@@ -1,0 +1,132 @@
+{
+  "analysis_temps_C": [
+    29.2,
+    39.2,
+    47.2
+  ],
+  "nominal": {
+    "Topt_C": 39.2,
+    "CT_max_C": 49.20037086076371,
+    "rmax": 0.08885332827240205,
+    "niche_width_C": 22.369192660273118
+  },
+  "summation_check": {
+    "sum_FCC_at_opt": 1.8004418754437368,
+    "sum_CC_Topt_org_wrt_Topt_i": 0.0
+  },
+  "top_thermal_determinants": [
+    {
+      "rxn_id": "PGK",
+      "enzyme_id": null,
+      "CC[Topt_C,Topt_i]": 0.0
+    },
+    {
+      "rxn_id": "ENO",
+      "enzyme_id": null,
+      "CC[Topt_C,Topt_i]": 0.0
+    },
+    {
+      "rxn_id": "H2Ot",
+      "enzyme_id": null,
+      "CC[Topt_C,Topt_i]": 0.0
+    },
+    {
+      "rxn_id": "CO2t",
+      "enzyme_id": null,
+      "CC[Topt_C,Topt_i]": 0.0
+    },
+    {
+      "rxn_id": "PTAr",
+      "enzyme_id": null,
+      "CC[Topt_C,Topt_i]": 0.0
+    },
+    {
+      "rxn_id": "CYTBD",
+      "enzyme_id": null,
+      "CC[Topt_C,Topt_i]": 0.0
+    },
+    {
+      "rxn_id": "NADH16",
+      "enzyme_id": null,
+      "CC[Topt_C,Topt_i]": 0.0
+    },
+    {
+      "rxn_id": "GND",
+      "enzyme_id": null,
+      "CC[Topt_C,Topt_i]": 0.0
+    },
+    {
+      "rxn_id": "GLCpts",
+      "enzyme_id": null,
+      "CC[Topt_C,Topt_i]": 0.0
+    },
+    {
+      "rxn_id": "TKT2",
+      "enzyme_id": null,
+      "CC[Topt_C,Topt_i]": 0.0
+    }
+  ],
+  "top_rate_limiting_at_opt": [
+    {
+      "rxn_id": "ENO",
+      "enzyme_id": null,
+      "FCC_opt_39.2C": 0.7793492094926191
+    },
+    {
+      "rxn_id": "H2Ot",
+      "enzyme_id": null,
+      "FCC_opt_39.2C": 0.4456274011121142
+    },
+    {
+      "rxn_id": "CO2t",
+      "enzyme_id": null,
+      "FCC_opt_39.2C": 0.2966883590427405
+    },
+    {
+      "rxn_id": "NADH16",
+      "enzyme_id": null,
+      "FCC_opt_39.2C": 0.09878181873591574
+    },
+    {
+      "rxn_id": "GND",
+      "enzyme_id": null,
+      "FCC_opt_39.2C": 0.0794267460459297
+    },
+    {
+      "rxn_id": "FBA",
+      "enzyme_id": null,
+      "FCC_opt_39.2C": 0.05340611690196617
+    },
+    {
+      "rxn_id": "ATPS4r",
+      "enzyme_id": null,
+      "FCC_opt_39.2C": 0.04716222411245141
+    },
+    {
+      "rxn_id": "PGK",
+      "enzyme_id": null,
+      "FCC_opt_39.2C": 0.0
+    },
+    {
+      "rxn_id": "CYTBD",
+      "enzyme_id": null,
+      "FCC_opt_39.2C": 0.0
+    },
+    {
+      "rxn_id": "GLCpts",
+      "enzyme_id": null,
+      "FCC_opt_39.2C": 0.0
+    }
+  ],
+  "identifiability": {
+    "method": "first-order control-magnitude proxy (screen), refined by finite difference on top-K; NOT Fisher information",
+    "n_params_total": 219,
+    "n_identifiable_from_growth": 37,
+    "frac_identifiable": 0.1689497716894977,
+    "frac_requires_omics": 0.8310502283105023,
+    "n_refined_topk": 45,
+    "n_identifiable_topk": 28,
+    "frac_identifiable_topk": 0.6222222222222222,
+    "threshold": 0.05
+  }
+}

@@ -1,0 +1,17 @@
+Name,base,bound,note
+r_1654,ammonium,1000.0,
+r_1832,H+,1000.0,
+r_1861,iron(2+),1000.0,
+r_1992,oxygen,1000.0,
+r_2005,phosphate,1000.0,
+r_2020,potassium,1000.0,
+r_2049,sodium,1000.0,
+r_2058,sucrose,1000.0,sucrose C source
+r_2060,sulphate,1000.0,
+r_2100,H2O,1000.0,
+r_4593,chloride,1000.0,
+r_4594,Cu2(+),1000.0,
+r_4595,Mn(2+),1000.0,
+r_4596,Zn(2+),1000.0,
+r_4597,Mg(2+),1000.0,
+r_4600,Ca(2+),1000.0,

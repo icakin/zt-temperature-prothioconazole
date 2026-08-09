@@ -1,0 +1,8 @@
+            elpd_diff se_diff elpd_loo se_elpd_loo p_loo   se_p_loo looic  
+Hill            0.0       0.0   538.1     16.9        22.1     5.1  -1076.2
+Weibull1       -2.0       1.6   536.1     17.7        21.4     5.5  -1072.2
+Exponential    -8.2       4.8   529.9     14.8        16.3     3.7  -1059.9
+            se_looic
+Hill           33.8 
+Weibull1       35.3 
+Exponential    29.7 

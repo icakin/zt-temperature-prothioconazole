@@ -1,0 +1,12 @@
+# Quick smoke-test sweep: a handful of samples, for checking the pipeline runs.
+# Not for science -- use `default` (or a strain-specific experiment) for real runs.
+kind: sweep
+sensitivity:
+  n_samples: 8
+  seed: 1
+  parameters:
+    dTopt:        [-6.0, 6.0]
+    topt_scale:   [0.7, 1.4]
+    dCp_scale:    [0.5, 2.0]
+    budget_scale: [0.7, 1.1]
+  groups: []

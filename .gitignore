@@ -1,0 +1,12 @@
+.DS_Store
+.Rhistory
+.RData
+__pycache__/
+_to_delete/
+data/reference/eggnog_db/
+data/reference/salmon_index/
+data/qc/
+*.h5
+
+# large regenerable posterior draws (kept locally, excluded from git)
+tables/physiology/fungicide_effect_sizes_by_temperature_draws.csv

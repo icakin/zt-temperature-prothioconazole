@@ -1,0 +1,25 @@
+# Strain template (ORGANISM ONLY). To add a new strain NAME:
+#   1. cp -r strains/_template strains/NAME
+#   2. put the enzyme-constrained model in strains/NAME/model/ and set model_file
+#   3. adjust the provider knobs, T0_C, and temperature_grid
+#   4. run:  etcgem build --strain NAME   then   etcgem tpc --strain NAME
+#            (or a sweep:  etcgem sweep --strain NAME --experiment default)
+# Method settings (sensitivity, solver_timeout, crit_frac) come from
+# defaults.yaml + experiments/, NOT this file.
+provider:
+  type: gecko                 # gecko | csv  (toy needs no model; see strains/_toy)
+  model_file: MODEL.xml       # <-- put this file under strains/NAME/model/
+  prot_prefix: prot_          # enzyme pseudo-metabolite id prefix
+  pool_id: prot_pool          # protein pool metabolite id
+  biomass_rxn: null           # null -> auto-detect from objective
+  default_Topt_offset: 8.0    # assumed enzyme Topt above T0 (K)
+  default_dCp: -8.0           # assumed MMRT curvature (more negative = narrower)
+  target_fraction: null       # null -> reuse the model's own pool bound (else e.g. 0.6)
+  pool_scale: 0.9             # <1 keeps the proteome pool binding across the curve
+
+T0_C: 30                      # reference temperature of the kcats
+
+temperature_grid:
+  start_C: 5
+  stop_C: 45
+  n: 41
