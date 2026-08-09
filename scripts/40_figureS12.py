@@ -59,7 +59,7 @@ axD.bar(x-w/2, [ms.loc[c,"AOX_share_minimal"]*100 for c in conds], w,
 axD.bar(x+w/2, [ms.loc[c,"AOX_share_rich"]*100 for c in conds], w,
         color="#C9A227", label="enriched (+38 uptakes)")
 axD.set_xticks(x); axD.set_xticklabels([c.replace("_"," °C\n")+" mg L$^{-1}$" for c in conds], fontsize=5.2)
-axD.set_ylabel("Required AOX share of O$_2$ (%)")
+axD.set_ylabel("AOX share of O$_2$ (%)")
 axD.legend(fontsize=6, frameon=False, loc="upper left")
 
 for ax, L in [(axA,"A"),(axB,"B"),(axC,"C"),(axD,"D")]:

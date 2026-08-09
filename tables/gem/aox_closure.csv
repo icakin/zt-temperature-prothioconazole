@@ -1,0 +1,7 @@
+cond,baseline_feasible,AOX_share,AOXclosed_feasible,AOXclosed_freeMaint_feasible,required_NGAM_if_noAOX,fitted_NGAM,NGAM_fold_increase
+15_0,True,0.0,True,True,0.0,2.920570392537761,0.0
+15_2,True,0.13912653064259714,True,True,0.0,1.2850583727038907,0.0
+21_0,True,0.0,True,True,0.0,4.140667414578048,0.0
+21_2,True,0.24541642096758953,True,True,0.0,1.9003742377443806,0.0
+27_0,True,0.03849832055671445,True,True,0.0,3.101806404133486,0.0
+27_2,True,0.421649264339097,True,True,0.0,1.690206775276465,0.0

@@ -64,7 +64,7 @@ rho = aox_med[order].corr(fx.loc[order, "AOX_vst"], method="spearman")
 axC.text(0.04, 0.95, f"Spearman ρ = {rho:.2f}", transform=axC.transAxes, va="top",
          fontsize=7, color=st.INK2)
 axC.set_xlabel("AOX transcript (VST)")
-axC.set_ylabel("Required AOX share of O$_2$ (%)")
+axC.set_ylabel("AOX share of O$_2$ (%)")
 
 # ---- D: calibration identifiability analysis --------------------------------
 pp = np.load("etcGEMs/strains/zt_ipo323/outputs/calibration_phase1/posterior_predictive.npz")

@@ -4,7 +4,7 @@
 #   A  Uncalibrated model TPC vs measured growth. Enzyme catalytic optima
 #      are anchored at the measured optimum (see Methods); shape, magnitude
 #      and high-T failure are the emergent features. Calibration -> S11D.
-#   B  Required AOX share of O2 per condition (Monte-Carlo 95% bands) —
+#   B  AOX share of O2 per condition (Monte-Carlo 95% bands) —
 #      the model's demand matches AOX transcription (rho = 0.99)
 #   C  EC50(T): observed Hill vs the CYP51 safety-margin model and the
 #      GEM implementation (Vmax(T) + competitive inhibition)
@@ -71,7 +71,7 @@ axB.text(0.04, 0.95, f"vs AOX transcript:\nSpearman ρ = {rho:.2f}",
          transform=axB.transAxes, va="top", fontsize=6.6, color=st.INK2)
 axB.set_xticks(range(6))
 axB.set_xticklabels(["15 °C\n0", "15 °C\n2", "21 °C\n0", "21 °C\n2", "27 °C\n0", "27 °C\n2"], fontsize=6.2)
-axB.set_ylabel("Required AOX share of O$_2$ (%)")
+axB.set_ylabel("AOX share of O$_2$ (%)")
 axB.set_xlabel("Condition (temperature, prothioconazole mg L$^{-1}$)")
 
 # ===== C: EC50(T) — observed vs safety margin vs GEM =========================
@@ -103,7 +103,7 @@ for i, cond in enumerate(order):
 axD.axhline(1.0, ls=(0, (3, 3)), color="#C8C8C8", lw=0.8)
 axD.set_xticks(range(6))
 axD.set_xticklabels(["15 °C\n0", "15 °C\n2", "21 °C\n0", "21 °C\n2", "27 °C\n0", "27 °C\n2"], fontsize=6.2)
-axD.set_ylabel("Effective P/O ratio (ATP per O)")
+axD.set_ylabel("Effective ATP yield per O$_2$ atom")
 axD.set_xlabel("Condition (temperature, prothioconazole mg L$^{-1}$)")
 axD.text(0.97, 0.95, "energetic efficiency collapses\nunder drug + heat",
          transform=axD.transAxes, ha="right", va="top", fontsize=6.4,
