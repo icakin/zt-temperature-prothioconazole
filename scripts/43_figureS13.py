@@ -8,8 +8,8 @@ sys.path.insert(0, "scripts")
 import fig_style as st
 st.apply()
 
-fig, (axA, axB) = plt.subplots(1, 2, figsize=(7.4, 3.3))
-fig.subplots_adjust(left=0.10, right=0.97, top=0.90, bottom=0.18, wspace=0.34)
+fig, (axA, axB, axC) = plt.subplots(1, 3, figsize=(9.6, 3.3))
+fig.subplots_adjust(left=0.08, right=0.98, top=0.90, bottom=0.20, wspace=0.38)
 
 # ---- A: LOTO ----
 L = pd.read_csv("tables/gem/loto_margin.csv")
@@ -53,7 +53,21 @@ axB.set_ylim(0, max(C["pFBA_cost_increase_%"])*1.35)
 axB.text(0.03, 0.97, "all six conditions remain feasible\nwithout AOX (O$_2$ via cytochrome chain,\nless substrate-level ATP)",
          transform=axB.transAxes, va="top", fontsize=6.3, color=st.INK2)
 
-for ax, L_ in [(axA,"A"), (axB,"B")]:
+# ---- C: objective dependence ----
+OD = pd.read_csv("tables/gem/aox_objective_dependence.csv").set_index("cond").loc[order]
+xo = np.arange(len(order)); w = 0.36
+axC.bar(xo-w/2, OD["AOX_share_minFlux_pct"], w, color="#27519E", ec="white", lw=0.6,
+        label="minimum total flux")
+axC.bar(xo+w/2, OD["AOX_share_minProtein_pct"], w, color="#C9A227", ec="white", lw=0.6,
+        label="minimum total protein")
+axC.set_xticks(xo)
+axC.set_xticklabels([c.replace("_", " °C\n") + " mg L$^{-1}$" for c in order], fontsize=5.4)
+axC.set_ylabel("AOX share of O$_2$ (%)")
+axC.legend(fontsize=6, frameon=False, loc="upper left")
+axC.text(0.03, 0.80, "the inferred route depends\non the optimisation criterion",
+         transform=axC.transAxes, va="top", fontsize=6.2, color=st.INK2)
+
+for ax, L_ in [(axA,"A"), (axB,"B"), (axC,"C")]:
     pos = ax.get_position()
     fig.text(pos.x0-0.058, pos.y1+0.03, L_, fontsize=12, fontweight="bold")
 fig.savefig("figures/FigureS13.png", dpi=600, bbox_inches="tight")
