@@ -10,3 +10,13 @@ data/qc/
 
 # large regenerable posterior draws (kept locally, excluded from git)
 tables/physiology/fungicide_effect_sizes_by_temperature_draws.csv
+
+# ERA5 responses cached by scripts/49 (40 MB, regenerable from the API)
+data/climate/cache/
+
+# LaTeX intermediates from quarto render
+manuscript/*.aux
+manuscript/*.log
+manuscript/*.tex
+manuscript/*.out
+manuscript/*.toc

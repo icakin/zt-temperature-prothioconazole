@@ -37,12 +37,24 @@ thermal-chemical stress response (project 12129, isolate IPO323).
             (thermal grounding + calibration run via the etcGEMs CLI:
              see docs/RUNBOOK_mac.md)
     24-36   All figures:  bash scripts/run_all.sh  regenerates every figure
-            in figures/ (6 main + 11 supplementary)
+            in figures/ (6 main + 14 supplementary)
+    37-46   Robustness and identifiability: full-surface prediction, medium
+            and anchoring sensitivity, leave-one-temperature-out, AOX
+            identifiability, enzyme/proteome cost, shared-control test
+            (44_verify_all.py re-derives every modelling number in the paper)
+    47-48   Reference-free test of the temperature x dose interaction
+            (GAM separable vs tensor-interaction, exact LOO) -> Fig. S14
+    49-50   Climate exposure analysis (NOT used in the manuscript; retained
+            for reference): ERA5 hourly 2 m air temperature over the European
+            fungicide-spray window, binned into the assayed thermal bands.
+            The historical change is small relative to the total window, so
+            the analysis was kept out of the paper. Requires network access
+            on first run; responses cache under data/climate/cache/
 
 ## Manuscript
 
 The manuscript is authored in Quarto with references managed in references.bib
-(54 entries, author-date citations via @keys). Editing workflow: edit
+(56 entries, author-date citations via @keys). Editing workflow: edit
 manuscript.qmd, then `quarto render manuscript/manuscript.qmd` regenerates
 Manuscript.docx and Manuscript.pdf with formatted citations. Sequencing reads
 are NOT stored in this repository (deposit at ENA; accession in the paper).
@@ -51,4 +63,5 @@ are NOT stored in this repository (deposit at ENA; accession in the paper).
 
 R (tidyverse, brms, ggridges, patchwork, minpack.lm, DESeq2, tximport, ashr),
 Python 3 (numpy, pandas, scipy, matplotlib, cobra, gseapy, adjustText, emcee),
+R (mgcv, for the reference-free interaction test in script 47),
 Salmon, eggNOG-mapper. The etcGEMs package installs with `pip install -e etcGEMs`.

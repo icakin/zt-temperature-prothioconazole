@@ -16,7 +16,7 @@ format:
 
 Ilgaz Cakin, Helen Fones, Nicholas Smirnoff, Samraat Pawar, Angus Buckling, Daniel Padfield, Gabriel Yvon-Durocher
 
-This document contains Supplementary Figures S1–S13.
+This document contains Supplementary Figures S1–S14 and Supplementary Table S1.
 
 
 ![](../figures/FigureS1.png){width=6.3in}
@@ -104,3 +104,27 @@ This document contains Supplementary Figures S1–S13.
 ![](../figures/FigureS13.png){width=6.3in}
 
 **Figure S13. Identifiability tests bounding what the modelling establishes.** (A) Leave-one-temperature-out cross-validation of the CYP51 safety-margin model: the model was refitted to six temperatures and used to predict the seventh (points, coloured by temperature; horizontal bars, the observed 95% credible interval; dashed line, equality). Out-of-sample agreement is poor (log₁₀ EC₅₀ correlation r = −0.14; four of seven predictions within the observed interval; the held-out 27 °C estimate predicted as 2.77 against 5.00 mg L⁻¹ observed), so the safety-margin model is an explanatory fit to the measured temperature dependence rather than a predictor of unseen temperatures. (B) AOX structural identifiability: the AOX reaction was constrained to zero and each condition re-solved under the same physiological constraints. All six conditions remain feasible, with oxygen routed through the cytochrome chain and a compensating decrease in substrate-level phosphorylation, so that total ATP production is essentially unchanged; bars show the increase in total flux relative to the unconstrained parsimonious solution. AOX is therefore selected by the minimum-total-flux criterion rather than required by the constraints; minimising total protein instead returns solutions with little or no AOX. (C) Objective dependence: AOX share of oxygen consumption in the same conditions under a minimum-total-flux objective (as used throughout the paper) and under a minimum-total-protein objective in the enzyme-constrained model; the two criteria select different terminal routes, so the physiological constraints alone do not determine respiratory routing. The correspondence with measured AOX transcripts (Fig. S11C), rather than the network solution alone, supports preferential AOX engagement in vivo.
+
+\newpage
+
+![](../figures/FigureS14.png){width=6.3in}
+
+**Figure S14. A reference-free test confirms the temperature × fungicide interaction.** Log growth rate across all 156 replicate-level observations was fitted with penalised regression splines as a separable surface, log g = f(T) + h(c), and compared with the same surface plus a pure-interaction tensor term, + ti(T, c) (Methods). (A) The interaction residual F(T,c) − [f(T) + h(c)] against temperature, one line per prothioconazole concentration (posterior medians; dashed horizontal line, exact separability; vertical line, the 24 °C thermal optimum). (B) The same residual as a temperature × concentration surface, directly comparable with the Bliss deviation heatmap of Fig. 2F although computed without a reference temperature or a multiplicative null; blue indicates growth below the separable expectation (synergy) and red growth above it (antagonism). At the higher concentrations the residual is negative at 15 °C and positive at 27–28 °C, recovering the reversal. (C) Out-of-sample evidence: exact leave-one-out root-mean-square error of the two models, each refitted 156 times. Pointwise credible intervals on the residual surface include zero almost everywhere, so the evidence for interaction rests on the global model comparison and out-of-sample performance summarised in (C) rather than on individual points of the surface; sensitivity to the spline basis dimension is given in Table S1.
+
+\newpage
+
+**Table S1. Sensitivity of the reference-free interaction test to the spline basis dimension.** The pure-interaction tensor term ti(T, c) was refitted across basis dimensions for its temperature and dose margins, with the marginal smooths held at their reported dimensions. edf, effective degrees of freedom; ΔAIC, improvement over the separable model. The interaction is favoured at every setting, but support strengthens as the temperature basis becomes able to represent a sign reversal across the thermal optimum. Exact leave-one-out root-mean-square error is shown for the reported basis and for a coarser alternative.
+
+| k (temperature × dose) | edf | F | P | ΔAIC | exact LOO RMSE |
+|---|---|---|---|---|---|
+| 3 × 3 | 1.00 | 4.40 | 0.038 | 2.66 | — |
+| 3 × 4 | 2.31 | 2.19 | 0.069 | 3.03 | — |
+| 4 × 3 | 2.77 | 4.29 | 0.0057 | 9.07 | 0.2272 |
+| 4 × 4 | 2.77 | 4.29 | 0.0057 | 9.07 | — |
+| 5 × 3 | 4.82 | 5.27 | 8.1 × 10⁻⁵ | 22.37 | — |
+| 5 × 4 (reported) | 5.50 | 4.62 | 1.1 × 10⁻⁴ | 22.09 | 0.2162 |
+
+: {tbl-colwidths="[24,10,10,16,12,18]"}
+
+The separable model's exact leave-one-out RMSE is 0.2343.
+
