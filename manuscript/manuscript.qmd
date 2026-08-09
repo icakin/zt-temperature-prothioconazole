@@ -216,7 +216,7 @@ The temperature dependence of azole potency was modelled as a safety-margin phen
 
 Data and code availability
 
-Raw sequencing reads will be deposited in a public sequence repository on publication [accession pending]. Analysis code (physiology, transcriptomics and modelling pipelines), the ztGEM/ecZtGEM model files (SBML) with the zt_ipo323 strain folder for the enzyme- and temperature-constrained pipeline, processed data, the enzyme thermal-parameter tables (TemStaPro pseudo-Tm and DLTKcat-derived fits), calibration priors and posterior samples, and the scripts regenerating every main and supplementary figure will be made publicly available on publication [repository/DOI pending].
+Raw sequencing reads are available at the European Nucleotide Archive under project accession PRJEB123587 (to be released on publication). Analysis code (physiology, transcriptomics and modelling pipelines), the ztGEM/ecZtGEM model files (SBML) with the zt_ipo323 strain folder for the enzyme- and temperature-constrained pipeline, processed data, the enzyme thermal-parameter tables (TemStaPro pseudo-Tm and DLTKcat-derived fits), calibration priors and posterior samples, and the scripts regenerating every main and supplementary figure are available at https://github.com/icakin/zt-temperature-prothioconazole and permanently archived at Zenodo (doi:10.5281/zenodo.21861072).
 
 # Acknowledgements
 
