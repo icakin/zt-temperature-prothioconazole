@@ -50,7 +50,7 @@ axB.set_xticks(x)
 axB.set_xticklabels([c.replace("_", " °C\n") + " mg L$^{-1}$" for c in order], fontsize=5.4)
 axB.set_ylabel("Extra total flux when AOX is blocked (%)")
 axB.set_ylim(0, max(C["pFBA_cost_increase_%"])*1.35)
-axB.text(0.03, 0.97, "all six conditions remain feasible\nwithout AOX (O$_2$ via cytochrome\nchain + ATP dissipation)",
+axB.text(0.03, 0.97, "all six conditions remain feasible\nwithout AOX (O$_2$ via cytochrome chain,\nless substrate-level ATP)",
          transform=axB.transAxes, va="top", fontsize=6.3, color=st.INK2)
 
 for ax, L_ in [(axA,"A"), (axB,"B")]:
