@@ -16,7 +16,7 @@ format:
 
 Ilgaz Cakin, Helen Fones, Nicholas Smirnoff, Samraat Pawar, Angus Buckling, Daniel Padfield, Gabriel Yvon-Durocher
 
-This document contains Supplementary Figures S1–S11.
+This document contains Supplementary Figures S1–S12.
 
 
 ![](../figures/FigureS1.png){width=6.3in}
@@ -92,3 +92,9 @@ This document contains Supplementary Figures S1–S11.
 ![](../figures/FigureS11.png){width=6.3in}
 
 **Figure S11. Grounding and calibration diagnostics for the genome-scale metabolic model.** (A) Distribution of sequence-predicted melting temperatures (TemStaPro pseudo-T_m) for the 742 model enzymes; dashed lines mark the RNA-seq assay temperatures. (B) Temperature-dependent turnover predictions (DLTKcat): median and interquartile range of per-reaction log₁₀ k_cat across the 5–45 °C grid, with the azole target CYP51 (r_0317) highlighted. (C) The model-required AOX share of oxygen consumption against measured AOX transcript abundance (VST) across the six conditions (Spearman ρ = 0.99); point colour encodes temperature and marker shape dose. (D) Bayesian calibration of the four global enzyme parameters against the control TPC, shown as an identifiability analysis: emergent model (dashed), posterior median and 90% posterior-predictive band (solid line and shading), and measured growth (points). Only the melting-temperature shift is curve-constrained (−14.1 K, 90% CI −15.0 to −11.0, abutting the prior bound); the posterior sharpens the falling limb at the cost of the measured optimum and does not close the ~3-fold magnitude gap, so all downstream analyses use the uncalibrated model.
+
+\newpage
+
+![](../figures/FigureS12.png){width=6.3in}
+
+**Figure S12. Robustness of the genome-scale model's conclusions.** (A) The full dose × temperature relative-growth surface predicted by the enzyme-constrained network with Arrhenius CYP51 capacity and competitive inhibition (dashed lines), against the Hill-characterised measured surface (solid lines), coloured by temperature; only the control thermal performance curve and the EC₅₀-fitted capacity parameters enter the prediction. (B) Model versus measured relative growth across the 49 treated conditions (Pearson r = 0.83). The model reproduces cool synergy and high-dose antagonism but predicts no interaction at supra-optimal low doses, localising the component of the interaction attributable to the shared transcriptional programme rather than CYP51 kinetics. (C) Anchoring sensitivity: re-anchoring per-enzyme catalytic optima at 20, 22 and 26 °C shifts the emergent peak commensurately, while CTmax (dashed vertical line), the maximum rate and the shape of the high-temperature collapse are invariant, confirming that these features derive from sequence-predicted enzyme stabilities. (D) Medium sensitivity: required AOX shares of oxygen consumption under the sucrose-minimal medium used throughout the paper versus an enriched medium with 38 amino-acid and nucleobase uptakes opened (0.5 mmol gDW⁻¹ h⁻¹ each); enrichment increases the requirement, making the minimal medium the conservative choice.
