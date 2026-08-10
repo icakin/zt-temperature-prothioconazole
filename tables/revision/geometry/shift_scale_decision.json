@@ -1,0 +1,16 @@
+{
+  "nu": 0.0903797551394871,
+  "materiality_floor": 0.022594938784871774,
+  "win_threshold": 0.9,
+  "p_scale": 0.1865,
+  "p_shift": 0.8135,
+  "RMSE_scale": 0.10402233784073699,
+  "RMSE_shift": 0.09692190398050951,
+  "RMSE_mixed": 0.10533783596772676,
+  "median_abs_rmse_diff": 0.006499393745241125,
+  "best_single": "shift",
+  "p_mixed_better": 0.2035,
+  "median_mixed_gain": -0.006212192079636282,
+  "outcome": "C2 (underpowered; potency vs amplitude not separable)",
+  "B": 2000
+}
