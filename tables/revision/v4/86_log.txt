@@ -1,0 +1,49 @@
+
+=== primary: plain ztGEM, default NGAM ===
+  (15, 0): delta med=+0.0000 [+0.0000,+0.0000]  P(|d|<5%)=1.000  near-neutral: True
+  (21, 0): delta med=+0.0000 [-0.0000,+0.0000]  P(|d|<5%)=1.000  near-neutral: True
+  (27, 0): delta med=+0.0000 [-0.0000,+0.0000]  P(|d|<5%)=1.000  near-neutral: True
+  (15, 2): delta med=+0.0000 [+0.0000,+0.0000]  P(|d|<5%)=1.000  near-neutral: True
+  (21, 2): delta med=+0.0000 [-0.0000,+0.0000]  P(|d|<5%)=1.000  near-neutral: True
+  (27, 2): delta med=+0.0000 [-0.0000,+0.0000]  P(|d|<5%)=1.000  near-neutral: True
+  variant verdict: PASS
+
+=== sensitivity: NGAM x0.5 ===
+  (15, 0): delta med=+0.0000 [+0.0000,+0.0000]  P(|d|<5%)=1.000  near-neutral: True
+  (21, 0): delta med=+0.0000 [-0.0000,+0.0000]  P(|d|<5%)=1.000  near-neutral: True
+  (27, 0): delta med=+0.0000 [-0.0000,+0.0000]  P(|d|<5%)=1.000  near-neutral: True
+  (15, 2): delta med=+0.0000 [+0.0000,+0.0000]  P(|d|<5%)=1.000  near-neutral: True
+  (21, 2): delta med=+0.0000 [+0.0000,+0.0000]  P(|d|<5%)=1.000  near-neutral: True
+  (27, 2): delta med=+0.0000 [-0.0000,+0.0000]  P(|d|<5%)=1.000  near-neutral: True
+  variant verdict: PASS
+
+=== sensitivity: NGAM x2 ===
+  (15, 0): delta med=+0.0000 [+0.0000,+0.0000]  P(|d|<5%)=1.000  near-neutral: True
+  (21, 0): delta med=+0.0000 [-0.0000,+0.0000]  P(|d|<5%)=1.000  near-neutral: True
+  (27, 0): delta med=+0.0000 [+0.0000,+0.0000]  P(|d|<5%)=1.000  near-neutral: True
+  (15, 2): delta med=+0.0000 [-0.0000,+0.0000]  P(|d|<5%)=1.000  near-neutral: True
+  (21, 2): delta med=+0.0000 [+0.0000,+0.0000]  P(|d|<5%)=1.000  near-neutral: True
+  (27, 2): delta med=+0.0000 [-0.0000,+0.0000]  P(|d|<5%)=1.000  near-neutral: True
+  variant verdict: PASS
+
+=== sensitivity: enriched medium ===
+  enriched medium: opened 40 uptakes at 0.5
+  (15, 0): delta med=+0.0000 [-0.0000,+0.0000]  P(|d|<5%)=1.000  near-neutral: True
+  (21, 0): delta med=+0.0000 [-0.0000,+0.0000]  P(|d|<5%)=1.000  near-neutral: True
+  (27, 0): delta med=+0.0000 [-0.0000,+0.0000]  P(|d|<5%)=1.000  near-neutral: True
+  (15, 2): delta med=+0.0000 [-0.0000,+0.0000]  P(|d|<5%)=1.000  near-neutral: True
+  (21, 2): delta med=+0.0000 [-0.0000,+0.0000]  P(|d|<5%)=1.000  near-neutral: True
+  (27, 2): delta med=+0.0000 [-0.0000,+0.0000]  P(|d|<5%)=1.000  near-neutral: True
+  variant verdict: PASS
+
+=== sensitivity: ecZtGEM_full (reference parameters) ===
+  biomass=r_2111, O2 rxns=['r_1992'], AOX rxns=['r_AOX_No1']
+  (15, 0): delta=-0.0000  near-neutral: True
+  (21, 0): delta=+0.0000  near-neutral: True
+  (27, 0): delta=+0.0000  near-neutral: True
+  (15, 2): delta=+0.0000  near-neutral: True
+  (21, 2): delta=+0.0000  near-neutral: True
+  (27, 2): delta=+0.0000  near-neutral: True
+  variant verdict: PASS
+
+OVERALL: AOX-deletion near-neutrality ROBUST -> publishable as prospective hypothesis

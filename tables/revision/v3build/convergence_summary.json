@@ -1,0 +1,14 @@
+{
+  "S27": 39.918941869602975,
+  "category": {
+    "ribosome/translation": 1.8684638541993568,
+    "oxid.phos/cytochrome": 0.09313332263094969,
+    "alternative oxidase": 0.02583125565340956,
+    "ergosterol/sterol": 0.007656286317994799,
+    "heat-shock/chaperone": 0.20803723243525843,
+    "transport/efflux": 1.0412374505679347,
+    "oxidative-stress/redox": 0.5330560792301152,
+    "amino-acid metabolism": 0.3941896278698337
+  },
+  "aox_gene": "Mycgr3G72918"
+}

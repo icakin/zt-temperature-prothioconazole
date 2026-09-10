@@ -1,0 +1,130 @@
+---
+title: "Supplementary Materials: Supra-optimal temperature antagonises prothioconazole action in *Zymoseptoria tritici* through convergent thermal and chemical stress responses"
+format:
+  docx:
+    output-file: "Supplementary_Materials"
+  pdf:
+    geometry: margin=2.5cm
+    pdf-engine: xelatex
+    mainfont: DejaVuSerif.ttf
+    mainfontoptions:
+      - BoldFont=DejaVuSerif-Bold.ttf
+      - ItalicFont=DejaVuSerif-Italic.ttf
+      - BoldItalicFont=DejaVuSerif-BoldItalic.ttf
+    output-file: "Supplementary_Materials"
+---
+
+Ilgaz Cakin, Helen Fones, Nicholas Smirnoff, Samraat Pawar, Angus Buckling, Daniel Padfield, Gabriel Yvon-Durocher
+
+This document contains Supplementary Figures S1–S14 and Supplementary Table S1.
+
+
+![](../figures/FigureS1.png){width=6.3in}
+
+**Figure S1. Thermal performance fit diagnostics.** Biomass-corrected growth (A) and respiration (B) rates for every retained replicate (points) with the posterior-median Sharpe–Schoolfield curve (line), faceted by prothioconazole dose; y-axes log₁₀-scaled.
+
+\newpage
+
+
+![](../figures/FigureS2.png){width=6.3in}
+
+**Figure S2. Posterior predictive checks.** Density overlays of 60 posterior-predictive replicates (light lines) against observed data (dark line) for the growth Hill model (A) and the respiration log-linear model (B). (C) Empirical coverage of the 95% predictive interval for each model class (0.93–0.97; dashed line, nominal 0.95).
+
+\newpage
+
+
+![](../figures/FigureS3.png){width=6.3in}
+
+**Figure S3. Growth dose–response by temperature.** Hill model posterior medians and 95% credible ribbons with raw replicate rates, one panel per assay temperature (15–28 °C).
+
+\newpage
+
+
+![](../figures/FigureS4.png){width=6.3in}
+
+**Figure S4. The ergosterol pathway is only mildly perturbed and the drug target is not transcriptionally induced.** (A) Group-mean expression (VST z-score) of ergosterol-pathway genes across all six conditions. (B) Per-gene prothioconazole log₂FC at each temperature. (C) Pathway activity score per sample. (D) CYP51/ERG11 versus AOX expression. (E) Per-gene temperature × drug interaction coefficients.
+
+\newpage
+
+
+![](../figures/FigureS5.png){width=6.3in}
+
+**Figure S5. The transcriptome-wide drug response contracts with warming.** (A) Empirical cumulative distribution of genome-wide |log₂FC| of the drug effect at each temperature. (B) Retention of the 15 °C-significant drug response at 21 and 27 °C (per-gene log₂FC scatter with slopes). (C) Gene-class tallies of response retention and loss. (D) Stress-programme module scores per condition: the 27 °C control already resembles drug-treated states. (E) Heat versus drug convergence at the gene level.
+
+\newpage
+
+
+![](../figures/FigureS6.png){width=6.3in}
+
+**Figure S6. Full KEGG pathway landscape of the prothioconazole response.** GSEA over the restricted KEGG universe at two FDR cutoffs, extending the FDR < 0.001 core shown in Fig. 3C.
+
+\newpage
+
+
+![](../figures/FigureS7.png){width=6.3in}
+
+**Figure S7. Gene-level view of the leading pathways.** Expression (log₂FC) of the largest-effect member genes of the pathways in Fig. S6 across temperatures.
+
+\newpage
+
+
+![](../figures/FigureS8.png){width=6.3in}
+
+**Figure S8. Gene-level convergence of the drug and warming programmes.** Each gene's peak prothioconazole effect (largest |log₂FC| across 15–27 °C) against its warming response (27 versus 15 °C). Significant genes are coloured by direction concordance (shared up, shared down, divergent), with the correlation and percentage responding in the same direction inset; AOX2 (shared) and CDR1 (drug-specific) are highlighted.
+
+\newpage
+
+
+![](../figures/FigureS9.png){width=6.3in}
+
+**Figure S9. Robustness of the physiological interaction analysis.** (A) Temperature-specific sensitivity (pEC₅₀) against baseline growth (r₀). (B) The 27 °C EC₅₀ exceeds the tested concentration range (extrapolation region shaded), so its absolute value is an extrapolation while its rank order is not. (C) The sign of the Bliss deviation (synergy at 15 °C, antagonism at 27 °C) is unchanged when the reference temperature is moved from 24 to 21 °C.
+
+\newpage
+
+
+![](../figures/FigureS10.png){width=6.3in}
+
+**Figure S10. Extended physiology–transcriptome integration.** (A–C) Functional module scores against condition-level physiological rates (Pearson r and P per panel), extending Fig. 5C,D. (D) Membrane and storage remodelling: mean shrunken log₂FC across membrane-lipid, storage-carbohydrate and related gene sets per condition. (E) Similarity of the 27 °C control transcriptome to each perturbed state, showing that supra-optimal heat alone most resembles drug exposure.
+
+\newpage
+
+
+![](../figures/FigureS11.png){width=6.3in}
+
+**Figure S11. A reference-free test confirms the temperature × fungicide interaction.** Log growth rate across all 156 replicate-level observations was fitted with penalised regression splines as a separable surface, log g = f(T) + h(c), and compared with the same surface plus a pure-interaction tensor term, + ti(T, c) (Methods). (A) The interaction residual F(T,c) − [f(T) + h(c)] against temperature, one line per prothioconazole concentration (posterior medians; dashed horizontal line, exact separability; vertical line, the 24 °C thermal optimum). (B) The same residual as a temperature × concentration surface, directly comparable with the Bliss deviation heatmap of Fig. 2F although computed without a reference temperature or a multiplicative null; blue indicates growth below the separable expectation (synergy) and red growth above it (antagonism). At the higher concentrations the residual is negative at 15 °C and positive at 27–28 °C, recovering the reversal. (C) Out-of-sample evidence: exact leave-one-out root-mean-square error of the two models, each refitted 156 times. Pointwise credible intervals on the residual surface include zero almost everywhere, so the evidence for interaction rests on the global model comparison and out-of-sample performance summarised in (C) rather than on individual points of the surface; sensitivity to the spline basis dimension is given in Table S1.
+
+\newpage
+
+![](../figures/FigureS12.png){width=6.3in}
+
+**Figure S12. The temperature contrast in SHAM sensitivity does not depend on the choice of fitting interval.** Growth rates were re-estimated for every well under seven alternative rules for the interval of the dissolved-oxygen trace over which the oxygen-consumption model is fitted: four fixed absolute windows (given in minutes from the start of the run) and three windows anchored to fixed fractions of each trace's own oxygen drawdown. The whole culture-level analysis was then repeated under each rule, with the 0.35 mM dose excluded throughout as in the main analysis. (A) The mean per-culture slope of growth rate on log₁₀ SHAM concentration at 15 °C (blue circles) and 27 °C (red triangles) under each rule; the dashed vertical line marks no dose effect. (B) The 27 °C minus 15 °C difference in that slope under each rule (grey diamonds), against the estimate from the hand-selected windows reported in Fig. 6 (red dashed line, −0.0238 h⁻¹ per tenfold). The 27 °C slope is more negative than the 15 °C slope under every rule, and the difference ranges from −0.011 to −0.023 h⁻¹ per tenfold, so the direction and approximate magnitude of the temperature contrast are not artefacts of the interval selection; the hand-selected windows give the largest estimate of the seven, so the primary figure is at the strong end of this range.
+
+\newpage
+
+![](../figures/FigureS13.png){width=6.3in}
+
+**Figure S13. Alternative-oxidase expression tracks the loss of carbon-use efficiency.** (A) Carbon-use efficiency against the AOX module score across the six transcriptomics conditions (colour, temperature; circles, 0 mg L⁻¹; triangles, 2 mg L⁻¹; thin coloured lines join the two doses at each temperature; grey line, the ordinary least-squares fit). The relationship is descriptive and rests on six condition means (Pearson r = −0.98; leave-one-condition-out range −0.99 to −0.98), so it identifies AOX induction as a marker of the low-efficiency state rather than establishing that AOX activity causes it; the causal test is the inhibitor experiment of Fig. 6. (B) The same AOX scores against temperature, showing that induction rises with temperature in the drug conditions and only at 27 °C without drug.
+
+\newpage
+
+![](../figures/FigureS14.png){width=6.3in}
+
+**Figure S14. Pathway-level temperature × drug interaction.** Gene-set enrichment analysis run on the DESeq2 temperature × prothioconazole interaction statistic (27 versus 15 °C contrast) over the same 105-pathway universe used throughout; the 26 pathways reaching FDR < 0.05 are shown, ordered by normalized enrichment score. Positive scores (red) mark pathways whose drug repression is attenuated at 27 °C, and these are the gene-expression machinery: ribosome, spliceosome, nucleocytoplasmic transport, ribosome biogenesis and RNA polymerase. Negative scores (blue) mark pathways whose drug induction is attenuated at 27 °C, and these are the detoxification and degradation pathways, including xenobiotic metabolism by cytochrome P450. ABC-transporter efflux does not reach significance in either direction, identifying it as the component of the drug response that persists at supra-optimal temperature.
+
+\newpage
+
+**Table S1. Sensitivity of the reference-free interaction test to the spline basis dimension.** The pure-interaction tensor term ti(T, c) was refitted across basis dimensions for its temperature and dose margins, with the marginal smooths held at their reported dimensions. edf, effective degrees of freedom; ΔAIC, improvement over the separable model. The interaction is favoured at every setting, but support strengthens as the temperature basis becomes able to represent a sign reversal across the thermal optimum. Exact leave-one-out root-mean-square error is shown for the reported basis and for a coarser alternative.
+
+| k (temperature × dose) | edf | F | P | ΔAIC | exact LOO RMSE |
+|---|---|---|---|---|---|
+| 3 × 3 | 1.00 | 4.40 | 0.038 | 2.66 | — |
+| 3 × 4 | 2.31 | 2.19 | 0.069 | 3.03 | — |
+| 4 × 3 | 2.77 | 4.29 | 0.0057 | 9.07 | 0.2272 |
+| 4 × 4 | 2.77 | 4.29 | 0.0057 | 9.07 | — |
+| 5 × 3 | 4.82 | 5.27 | 8.1 × 10⁻⁵ | 22.37 | — |
+| 5 × 4 (reported) | 5.50 | 4.62 | 1.1 × 10⁻⁴ | 22.09 | 0.2162 |
+
+: {tbl-colwidths="[24,10,10,16,12,18]"}
+
+The separable model's exact leave-one-out RMSE is 0.2343.
+

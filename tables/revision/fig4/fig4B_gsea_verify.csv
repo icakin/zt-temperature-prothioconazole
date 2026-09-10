@@ -1,0 +1,14 @@
+kegg_id,name,mean_21,FDR_21,mean_2721,FDR_2721,mean_27,FDR_27
+map03020,RNA polymerase,-0.114,0.20888,-0.379,0.0,-0.588,0.0
+map03008,Ribosome biogenesis in eukaryotes,-0.137,0.0,-0.3,0.0,-0.556,0.0
+map03040,Spliceosome,-0.025,0.87385,-0.453,0.0,-0.535,0.0
+map03010,Ribosome,0.102,0.0,-0.619,0.0,-0.501,0.0
+map03015,mRNA surveillance pathway,-0.084,0.3626,-0.358,0.00017,-0.5,0.0
+map03013,Nucleocytoplasmic transport,-0.108,0.02751,-0.276,0.0,-0.462,0.0
+map03018,RNA degradation,-0.036,0.57484,-0.247,0.0004,-0.312,0.00054
+map03060,Protein export,0.06,0.38343,-0.302,0.00087,-0.219,0.16476
+map03050,Proteasome,0.111,0.0,-0.053,0.17836,0.061,0.45176
+map00230,Purine metabolism,-0.057,0.42539,-0.103,0.00189,-0.212,0.00062
+map00030,Pentose phosphate pathway,-0.011,0.80861,-0.167,0.00084,-0.204,0.01056
+map00020,Citrate cycle (TCA cycle),0.09,0.02228,-0.194,0.0003,-0.08,0.1184
+map00190,Oxidative phosphorylation,0.212,0.0,-0.25,0.0,0.005,1.0

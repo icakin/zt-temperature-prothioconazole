@@ -1,0 +1,54 @@
+=== U1: sample-level temperature x drug interaction (module scores) ===
+[Ribosome module (117 genes, per-sample mean log2)] interaction F(2,39) = 12.28, p = 7.32e-05
+[Ribosome module (117 genes, per-sample mean log2)] (drug effect @21) - (drug effect @15) = +0.038 ± 0.375 (95% CI)
+[Ribosome module (117 genes, per-sample mean log2)] (drug effect @27) - (drug effect @15) = +0.865 ± 0.381 (95% CI)
+[AOX (single gene, log2)] interaction F(2,39) = 3.19, p = 5.20e-02
+[AOX (single gene, log2)] (drug effect @21) - (drug effect @15) = +0.796 ± 1.443 (95% CI)
+[AOX (single gene, log2)] (drug effect @27) - (drug effect @15) = -1.121 ± 1.467 (95% CI)
+
+=== U2: GSEA on DESeq2 interaction statistic (27 vs 15 contrast) ===
+pathways with interaction FDR<0.05: 26
+  map00051  NES=-2.34  FDR=0.0000
+  map00980  NES=-2.32  FDR=0.0000
+  map00071  NES=-2.27  FDR=0.0000
+  map00982  NES=-2.14  FDR=0.0008
+  map00680  NES=-2.03  FDR=0.0023
+  map00625  NES=-1.89  FDR=0.0195
+  map04146  NES=-1.85  FDR=0.0254
+  map00040  NES=-1.83  FDR=0.0245
+  map00830  NES=-1.77  FDR=0.0409
+  map00280  NES=-1.77  FDR=0.0377
+  map00480  NES=-1.74  FDR=0.0453
+  map00380  NES=-1.71  FDR=0.0499
+  map00450  NES=+1.58  FDR=0.0474
+  map03430  NES=+1.71  FDR=0.0160
+  map00230  NES=+1.84  FDR=0.0037
+  map03030  NES=+1.93  FDR=0.0012
+  map03015  NES=+2.04  FDR=0.0001
+  map00020  NES=+2.08  FDR=0.0001
+  map00190  NES=+2.10  FDR=0.0001
+  map03018  NES=+2.12  FDR=0.0000
+  map00240  NES=+2.14  FDR=0.0000
+  map03020  NES=+2.38  FDR=0.0000
+  map03008  NES=+2.57  FDR=0.0000
+  map03013  NES=+2.72  FDR=0.0000
+  map03040  NES=+2.72  FDR=0.0000
+  map03010  NES=+3.44  FDR=0.0000
+RIBOSOME interaction: NES=+3.44, FDR=0.0000 (positive NES = drug repression attenuated at 27 C)
+
+=== U3: state-convergence S(27) with sample-level statistics ===
+S(27) = 47.27; cos(drug,heat) = 0.451; variance explained = 0.203
+cos bootstrap 95% CI (samples resampled within condition): [0.272, 0.558]
+sample-label permutation p (cos >= observed): 0.0960 (perm 95th pct 0.495)
+
+=== U4: E_a dose-vs-control and trait-gap contrasts (posterior draws) ===
+dose          dEa_growth            dEa_resp                dGap
+0.06 +0.05 [-0.26,+0.37] -0.08 [-0.48,+0.33] -0.13 [-0.64,+0.39]
+0.12 -0.01 [-0.34,+0.32] +0.00 [-0.40,+0.41] +0.02 [-0.52,+0.54]
+0.25 -0.03 [-0.35,+0.30] +0.03 [-0.38,+0.43] +0.07 [-0.47,+0.58]
+ 0.5 +0.13 [-0.21,+0.46] -0.09 [-0.50,+0.31] -0.22 [-0.73,+0.31]
+   1 +0.26 [-0.07,+0.60] -0.09 [-0.51,+0.33] -0.35 [-0.90,+0.18]
+   2 +0.06 [-0.27,+0.39] +0.09 [-0.32,+0.49] +0.03 [-0.49,+0.54]
+   4 +0.01 [-0.32,+0.35] +0.11 [-0.29,+0.53] +0.10 [-0.44,+0.65]
+
+wrote -> tables/revision/inference/

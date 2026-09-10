@@ -1,0 +1,56 @@
+=== FROZEN IMPLEMENTATION CHOICES (recorded before scoring) ===
+kcat(T): per-arm linear interpolation of DLTKcat pred_log10kcat over the
+  5-45C grid; all prot_ metabolites of an arm share the arm kcat (complex
+  rule as built); arms without prediction use the per-T MEDIAN curve.
+phi_met(T): measured 0.14838/0.14894/0.14995 at 15/21/27; piecewise-linear
+  interpolation, linear extension beyond 27 (per prereg sect. 1).
+Ceiling mu_R(T) = 0.0523 * [phi_R(T)/phi_R(21)] * Q10^((T-21)/10), Q10=2
+  primary; ratios (Gate 0): 15 -> 0.93030, 27 -> 0.61018. Upper bound only.
+Maintenance: N1-cal fold pairs (a_GAM=0; b_NGAM per held-out fold) imposed
+  as r_4046 equality. P_min recompute uses the full-data reference pair
+  b=6.0640 (calibration, not scoring).
+R point prediction: O2 at the min-enzyme optimum; FVA on r_1992 with mu
+  and pool usage fixed at that optimum. CUE derived: cbio/(cbio+CO2),
+  cbio = mu*0.48/12.011*1000, CO2 = flux(r_1672).
+E_phys covariance: per-temperature block from 2000 vial bootstraps of log
+  condition means (2x2 for T!=21; 1x1 R-only at 21, growth anchored);
+  5% diagonal loading of each block's trace. Frozen now.
+Materiality: 0.25 * nu, nu = RMS of bootstrap SDs of the stacked target;
+  win proportion over 2000 target resamples (predictions fixed).
+Scoring targets: observed condition means of the 21 control vials
+  (consistent with script 58); Hill r0 medians used only for the ceiling
+  anchor and P_min rule as pre-registered.
+================================================================
+nu (target noise scale, log) = 0.1124; materiality floor = 0.0281
+catalytic arms with prot cost: 3504; with DLTKcat prediction: 2356 (67.2%); rest use median curve
+P_min probes (pool bound -> mu_max at 21C, maintenance b=6.064): 0.25:0.0163, 0.5:0.0501, 1.0:0.1177
+B_min = 0.5164 g/gDW -> P_min = 3.4673 g/gDW (literature max 0.25)
+!! PRE-REGISTERED PLAUSIBILITY GATE FAILS (prereg sect. 3): P_min exceeds the literature bound. The range is NOT expanded, no kcat rescaling is permitted, and the metabolic-pool module is reported as biologically implausible under DLTKcat absolute kcats.
+   Quantified: at the most generous plausible pool (P_eff = 0.25, sector split OFF, i.e. the entire budget given to metabolism), mu_max(21C) = 0.0163 h^-1 = 31% of observed 0.0523. Absolute kcat x saturation would need to be ~14x larger to reconcile.
+   Consequence per frozen rules: the E_phys/dE_net profile is NOT EVALUABLE. The surviving evaluable modules are the translation ceiling, N1-cal maintenance and stoichiometry (= N1), scored at the ceiling temperatures; N0 is fed N1 growth there. Network-only temperatures have no mechanistic growth prediction (N1 is exchange-cap-driven there, prereg 3.1 fallback to N0 alone).
+
+=== surviving-module predictions (N1: ceiling + maintenance + stoichiometry) ===
+         mu  ceiling  ceil_binds        O2     O2_lo     O2_hi     CUE   sucrose  cap_driven
+T                                                                                           
+15   0.0321   0.0321        True    4.8171    4.8171    4.8171  0.2063    1.0440       False
+18  20.6018      NaN       False  376.1503  376.1503  376.1503  0.4515  509.6512       False
+21   0.0523   0.0523        True    5.6501    5.6501    5.6501  0.2635    1.3346       False
+24  20.6028      NaN       False  376.1504  376.1504  376.1504  0.4516  509.6548       False
+26  20.6175      NaN       False  376.1524  376.1524  376.1524  0.4517  509.7109       False
+27   0.0484   0.0484        True    4.9062    4.9062    4.9062  0.2755    1.1811       False
+28  20.6216      NaN       False  376.1530  376.1530  376.1530  0.4518  509.7262       False
+
+=== ceiling-temperature scoring (15/21/27; growth at 21 is the anchor, scored for respiration only) ===
+ T  mu_pred  mu_obs  dlog_mu  R_pred  R_obs  dlog_R  R_pred_N0  dlog_R_N0
+15   0.0321  0.0420  -0.2694  4.8171 1.7124  1.0343     5.3360     1.1366
+21   0.0523  0.0524  -0.0027  5.6501 2.5100  0.8114     2.5720     0.0244
+27   0.0484  0.0414   0.1568  4.9062 4.3039  0.1310     2.6264    -0.4939
+
+=== gates and pre-stated expectations (surviving modules) ===
+ceiling violation 15C: obs mu 0.0420 vs ceiling 0.0321 -> VIOLATION
+ceiling violation 27C: obs mu 0.0414 vs ceiling 0.0484 -> ok
+24C peak: no mechanistic prediction exists (pool module failed + no ceiling at 24C) — consistent with the pre-stated expectation that the peak is not generated, in the strongest possible form.
+28C: no mechanistic growth prediction (same reason).
+supra-optimal respiration (pre-stated: underpredicts): pred 4.906 vs obs 4.304 (UNEXPECTED)
+
+wrote -> tables/revision/v2build

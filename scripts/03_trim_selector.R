@@ -49,12 +49,14 @@
 
 # base_dir = parent of scripts/ (same rule as 00_config.R); tables/ lives there.
 base_dir   <- dirname(.script_dir)
-tables_dir <- file.path(base_dir, "tables")
+tables_dir <- file.path(base_dir, "tables", "physiology")
 
 # Fallback ONLY to tables/ dirs relative to the working directory — never to any
 # hard-coded external location — so files can only ever land inside this project.
 if (!dir.exists(tables_dir)) {
-  cand <- c(file.path(getwd(), "tables"), file.path(getwd(), "..", "tables"))
+  cand <- c(file.path(getwd(), "tables", "physiology"),
+            file.path(getwd(), "..", "tables", "physiology"),
+            file.path(getwd(), "tables"), file.path(getwd(), "..", "tables"))
   hit  <- cand[dir.exists(cand)]
   if (length(hit)) tables_dir <- normalizePath(hit[1], mustWork = FALSE)
 }
@@ -667,4 +669,4 @@ server <- function(input, output, session) {
   )
 }
 
-shinyApp(ui, server)
+shiny::runApp(shinyApp(ui, server), launch.browser = TRUE)

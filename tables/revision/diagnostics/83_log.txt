@@ -1,0 +1,24 @@
+=== D2: AOX flux identifiability (plain ztGEM, condition-constrained FVA) ===
+ T  D    O2  AOX_min  AOX_max  AOX_pfba  share_min  share_max  share_pfba
+15  0 1.712      0.0   0.9579    0.9579        0.0      0.280       0.280
+15  2 2.340      0.0   4.3367    4.3367        0.0      0.927       0.927
+21  0 2.510      0.0   2.2754    2.2754        0.0      0.453       0.453
+21  2 4.023      0.0   7.8387    7.8387        0.0      0.974       0.974
+27  0 4.304      0.0   7.5518    7.5518        0.0      0.877       0.877
+27  2 5.140      0.0  10.2193   10.2193        0.0      0.994       0.994
+AOX lower bound = 0 in ALL conditions: True -> AOX flux is NOT identifiable from constraints (selected by parsimony only)
+
+=== D3: 26C respiration~dose slope, observation-level jackknife (OLS diagnostic) ===
+n obs at 26C = 23; full OLS slope = +0.0202 per mg/L
+jackknife slope range: [+0.0003, +0.0577]  (sign flips: 0/23)
+max leverage obs: h=0.267 at conc=4.0
+
+=== D4: state-projection robustness to top-loading gene removal ===
+full cos = 0.451
+remove top 1% |loading| (92 genes): cos = 0.442
+remove top 5% |loading| (460 genes): cos = 0.411
+
+=== D5: ribosome-module interaction, leave-one-sample-out p range ===
+full p = 7.32e-05; LOO p range = [1.31e-06, 2.69e-04] (max 0.0003)
+
+wrote -> tables/revision/diagnostics/
