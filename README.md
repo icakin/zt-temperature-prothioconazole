@@ -37,7 +37,7 @@ IPO323).
 
     20-32   RNA-seq (shell / R / Python): reference download, Salmon
             quantification, eggNOG annotation, DESeq2, KEGG GSEA tables,
-            module scores, CYP51/efflux sign audit, ribosome-expression checks.
+            module scores, EC50 target audit, CYP51 transcript check.
             25 writes the pathway tables the figure scripts read; it needs the
             eggNOG database, which is gitignored. Its output,
             data/reference/gene_annotation.csv, IS committed, so the figures
@@ -121,6 +121,8 @@ RNA-seq tools are required to regenerate the upstream tables, not the figures.
 ## Note on history
 
 Earlier versions of this project included an enzyme- and temperature-
-constrained genome-scale metabolic model (ztGEM/ecZtGEM). That analysis was
-removed from the manuscript and its code and model files are no longer in the
-working tree; they remain in the git history before commit 03621fe.
+constrained genome-scale metabolic model (ztGEM/ecZtGEM) and its
+preregistrations. That analysis was removed from the manuscript; its code,
+model files, preregistrations, reports and derived tables are not in the
+working tree. They are preserved on the branch `archive/gem` and in the git
+history before commit 03621fe.
