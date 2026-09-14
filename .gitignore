@@ -3,6 +3,7 @@
 .RData
 __pycache__/
 _to_delete/
+Claude outputs/
 data/reference/eggnog_db/
 data/reference/salmon_index/
 data/qc/

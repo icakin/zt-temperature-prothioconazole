@@ -17,7 +17,7 @@ STEPS <- list(
   list(fig = 3, scripts = "53_figure3.R", src = "figures/Figure3"),
   list(fig = 4, scripts = "54_figure4.R", src = "figures/Figure4"),
   list(fig = 5, scripts = "55_figure5.R", src = "figures/Figure5"),
-  list(fig = 6, scripts = "56_figure6.R", src = "figures/Figure6"))
+  list(fig = 6, scripts = c("43_azide_rates.R", "56_figure6.R"), src = "figures/Figure6"))
 
 args <- commandArgs(trailingOnly = TRUE)
 want <- if (length(args)) as.integer(args) else vapply(STEPS, `[[`, 0, "fig")

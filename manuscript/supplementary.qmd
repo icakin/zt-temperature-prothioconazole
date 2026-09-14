@@ -119,6 +119,18 @@ This document contains Supplementary Figures S1–S14 and Supplementary Table S1
 
 \newpage
 
+![](../figures/FigureS16.png){width=6.3in}
+
+**Figure S16. Dissolved-oxygen traces and model fits underlying the SHAM dose response (Fig. 6a, b).** All 36 curves: two temperatures (rows) × six SHAM concentrations (columns) × three cultures. Light lines, full raw traces; solid lines, the interval selected for fitting; dashed black lines, the fitted respiration model O(t) = O₀ + (K/r)(1 − e^{rt}), fitted by bounded nonlinear least squares over that interval (r is the per-culture growth rate plotted in Fig. 6a and listed in each panel). The 0.35 mM treatment is omitted, as in the main analysis (Fig. S12).
+
+\newpage
+
+![](../figures/FigureS17.png){width=6.3in}
+
+**Figure S17. Dissolved-oxygen traces and rate fits underlying the azide respirometry (Fig. 6c, d).** All 72 wells: three independent plates (rows; biological replicates) × three conditions (columns). Light lines, full raw traces; solid lines, the initial-rate window (post-equilibration maximum to +10 h); dashed black lines, linear fits over that window, whose slopes are the rates in Fig. 6d. Per-panel mean ± s.d. of well rates and mean R² are given. The plateau after about 10 h in azide-only wells is visible in every plate and lies outside the fitted window.
+
+\newpage
+
 **Table S1. Sensitivity of the reference-free interaction test to the spline basis dimension.** The pure-interaction tensor term ti(T, c) was refitted across basis dimensions for its temperature and dose margins, with the marginal smooths held at their reported dimensions. edf, effective degrees of freedom; ΔAIC, improvement over the separable model. The interaction is favoured at every setting, but support strengthens as the temperature basis becomes able to represent a sign reversal across the thermal optimum. Exact leave-one-out root-mean-square error is shown for the reported basis and for a coarser alternative.
 
 | k (temperature × dose) | edf | F | P | ΔAIC | exact LOO RMSE |
