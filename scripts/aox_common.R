@@ -85,28 +85,3 @@ PS_LAB   <- c(V = "Vehicle", S = "SHAM", P2 = "PTC 2 mg/L", P2S = "PTC 2 + SHAM"
               P4 = "PTC 4 mg/L", P4S = "PTC 4 + SHAM")
 PS_COL   <- c(V = "#8C8C8C", S = "#433D84", P2 = "#E5A24A", P2S = "#7B5EA7",
               P4 = "#B2182B", P4S = "#2A1A5E")
-
-# Trace preparation for the prothioconazole x SHAM plates, applied identically
-# before trimming (45 -> selector), fitting (46) and plotting (74):
-#   1. handling-step offset: readings after step_time_h are shifted by -step_mgL
-#      (the plates were briefly removed for an interim export at ~41 h);
-#   2. denoising: centred moving average of width PS_SMOOTH_H hours. The 27 C
-#      plates carry a 3-4 h re-aeration sawtooth (cell wells only) after the
-#      plates were moved to a second incubator; a 4 h average removes a 4 h
-#      cycle exactly and most of a 3 h one, while leaving the multi-hour growth
-#      trend untouched (cf. 44_sham_denoise_sensitivity.R). Set PS_SMOOTH_H <- 0
-#      to fit the raw traces.
-PS_SMOOTH_H <- 4
-prep_trace <- function(t_min, o2, step_time_h = NA, step_mgL = 0, smooth_h = PS_SMOOTH_H) {
-  y <- o2
-  if (is.finite(step_time_h) && is.finite(step_mgL) && step_mgL != 0)
-    y[t_min > step_time_h * 60] <- y[t_min > step_time_h * 60] - step_mgL
-  if (smooth_h > 0) {
-    dt <- median(diff(t_min), na.rm = TRUE); k <- max(3L, as.integer(round(smooth_h * 60 / dt)))
-    if (k %% 2 == 0) k <- k + 1L
-    ok <- is.finite(y); ys <- rep(NA_real_, length(y))
-    ys[ok] <- as.numeric(stats::filter(y[ok], rep(1 / k, k), sides = 2))
-    y <- ys
-  }
-  y
-}

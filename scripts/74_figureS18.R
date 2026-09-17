@@ -2,10 +2,9 @@
 # =============================================================================
 # 74_figureS18.R -- Figure S18: every dissolved-oxygen trace behind Figure 7.
 # Six plates (rows: temperature x independent culture) x six conditions
-# (columns), all 132 fitted wells. Light line: full raw trace (offset for the
-# ~41 h handling step removed). Solid line: the prepared trace (4 h moving
-# average) over the fitting interval, which is what was fitted. Dashed line:
-# the fitted oxygen model
+# (columns), all 132 fitted wells. Light line: full raw trace (after the offset
+# correction for the ~41 h handling step, where the fitting interval spans it).
+# Solid line: the fitting interval. Dashed line: the fitted oxygen model
 # O(t) = O2_0 + (K/r)(1 - exp(rt)), refitted here with the procedure of
 # 46_ptc_sham_rates.R, so the r values printed in each panel are those in
 # tables/aox/ptc_sham_well_rates.csv.
@@ -25,14 +24,15 @@ for (temp in c(15, 27)) {
   d <- read.csv(file.path(ROOT, sprintf("data/aox/ptc_sham_%d_Oxygen.csv", temp)), check.names = FALSE)
   for (i in which(W$temp == temp)) {
     w <- W[i, ]; cv <- sprintf("%s_R%d%s", w$condition, w$replicate, w$well)
-    y0 <- d[[cv]]; tt <- d$Time
-    st <- steps[steps$T == temp & steps$replicate == w$replicate & steps$well == w$well, ]
-    y  <- prep_trace(tt, y0, st$step_time_h, st$step_mgL)                # what 46 fitted
-    yr <- prep_trace(tt, y0, st$step_time_h, st$step_mgL, smooth_h = 0)  # step offset only
+    y <- d[[cv]]; tt <- d$Time
+    if (w$step_shift_mgL != 0) {
+      st <- steps[steps$T == temp & steps$replicate == w$replicate & steps$well == w$well, ]
+      y[tt > st$step_time_h * 60] <- y[tt > st$step_time_h * 60] - w$step_shift_mgL
+    }
     m <- tt >= w$fit_start & tt <= w$fit_end & is.finite(y)
     f <- fit_o2_model(tt[m], y[m])
     raw[[length(raw) + 1]]  <- data.frame(temp, replicate = w$replicate, condition = w$condition, well = w$well,
-                                          t_h = tt/60, o2 = yr, o2s = y, inwin = m)
+                                          t_h = tt/60, o2 = y, inwin = m)
     fitl[[length(fitl) + 1]] <- data.frame(temp, replicate = w$replicate, condition = w$condition, well = w$well,
                                            t_h = tt[m]/60, o2 = f$pred)
   }
@@ -64,15 +64,15 @@ th <- theme_classic(base_size = 8) +
         legend.key.width = unit(6, "mm"), legend.margin = margin(0, 0, 0, 0))
 
 p <- ggplot() +
-  geom_line(data = raw, aes(t_h, o2, group = g, colour = temp, linetype = "raw"), linewidth = 0.28, alpha = 0.22) +
-  geom_line(data = subset(raw, inwin), aes(t_h, o2s, group = g, colour = temp, linetype = "win"), linewidth = 0.4, alpha = 0.85) +
+  geom_line(data = raw, aes(t_h, o2, group = g, colour = temp, linetype = "raw"), linewidth = 0.28, alpha = 0.28) +
+  geom_line(data = subset(raw, inwin), aes(t_h, o2, group = g, colour = temp, linetype = "win"), linewidth = 0.4, alpha = 0.85) +
   geom_line(data = fitl, aes(t_h, o2, group = g, linetype = "fit"), colour = INK, linewidth = 0.32) +
   geom_text(data = lab, aes(x = 64, y = 16.0, label = txt), hjust = 1, vjust = 1, size = 1.7, colour = INK2, lineheight = 0.9) +
   facet_grid(plate ~ condition) +
   scale_colour_manual(values = c(`15` = C15, `27` = C27), guide = "none") +
   scale_linetype_manual(name = NULL, values = c(raw = "solid", win = "solid", fit = "22"),
                         breaks = c("raw", "win", "fit"),
-                        labels = c("raw trace (step offset removed)", "fitting interval (4 h moving average)", expression("fitted model   "*O(t)==O[0]+(K/r)*(1-e^{rt})*"   (numbers: "*italic(r)*", "*h^-1*", per well)"))) +
+                        labels = c("raw trace", "fitting interval", expression("fitted model   "*O(t)==O[0]+(K/r)*(1-e^{rt})*"   (numbers: "*italic(r)*", "*h^-1*", per well)"))) +
   guides(linetype = guide_legend(override.aes = list(colour = c("#888888", "#888888", INK), alpha = c(0.35, 1, 1), linewidth = c(0.5, 0.8, 0.6)))) +
   scale_x_continuous(limits = c(0, 65), breaks = c(0, 24, 48)) +
   scale_y_continuous(limits = c(0, 16.2), breaks = c(0, 5, 10, 15)) +
