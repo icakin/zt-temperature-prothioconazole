@@ -20,7 +20,9 @@
 #            (e.g. P2S_R2D1); blanks as bV_/bS_.
 #          tables/aox/ptc_sham/Oxygen_All_Long.csv
 #          tables/aox/ptc_sham/Oxygen_Trimmed_Series_Metadata.csv
-#            what 03_trim_selector.R needs to show these curves:
+#            what 03_trim_selector.R needs to show these curves (readings with
+#            only the ~41 h handling-step offset removed; denoising is chosen in
+#            the selector and saved with the windows):
 #              Rscript scripts/03_trim_selector.R tables/aox/ptc_sham
 #            It writes tables/aox/ptc_sham/manual_fit_windows.csv, which
 #            46_ptc_sham_rates.R uses when present.
@@ -88,9 +90,12 @@ for (temp in c(15, 27)) {
         T = temp, replicate = rep, well = w, condition = cond,
         step_time_h = round(st_t, 2), step_mgL = round(st_dy, 3))
       if (substr(cond, 1, 1) == "b") next          # blanks are not fitted
+      # selector table: raw readings with only the handling-step offset removed
+      # (so a moving average chosen in the selector does not smear the jump)
+      o2c <- step_correct(t_h * 60, o2, st_t, st_dy)
       long_all[[length(long_all) + 1]] <- data.frame(
         File = basename(f), Time = round(t_h * 60, 2), T = temp, Dose = cond,
-        Replicate = sprintf("R%d%s", rep, w), Oxygen = o2)
+        Replicate = sprintf("R%d%s", rep, w), Oxygen = o2c)
       # start: post-equilibration maximum of a 1 h moving average, searched after
       # the first 2.5 h (the trace starts high and falls while the vial equilibrates)
       sm1 <- as.numeric(stats::filter(o2, rep(1/51, 51), sides = 2)); sm1[is.na(sm1)] <- -Inf

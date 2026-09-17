@@ -85,3 +85,25 @@ PS_LAB   <- c(V = "Vehicle", S = "SHAM", P2 = "PTC 2 mg/L", P2S = "PTC 2 + SHAM"
               P4 = "PTC 4 mg/L", P4S = "PTC 4 + SHAM")
 PS_COL   <- c(V = "#8C8C8C", S = "#433D84", P2 = "#E5A24A", P2S = "#7B5EA7",
               P4 = "#B2182B", P4S = "#2A1A5E")
+
+# --- trace helpers shared by 03_trim_selector.R, 45, 46 and 74 -----------------
+# Offset correction for a handling step (plates briefly removed and re-inserted):
+# readings after step_time_h are shifted by -step_mgL. Offset only.
+step_correct <- function(t_min, y, step_time_h = NA, step_mgL = 0) {
+  if (is.finite(step_time_h) && is.finite(step_mgL) && step_mgL != 0)
+    y[t_min > step_time_h * 60] <- y[t_min > step_time_h * 60] - step_mgL
+  y
+}
+# Denoising: centred moving average of width smooth_h hours (0 = none). For the
+# model O(t) = O2_0 + (K/r)(1 - exp(rt)) a centred moving average leaves r
+# unchanged and multiplies K by sinh(rW/2)/(rW/2) (1.002 for r = 0.06 h^-1,
+# W = 4 h), so the growth rate is unbiased by construction. Returns NA at the
+# edges (half a window at each end).
+smooth_ma <- function(t_min, y, smooth_h = 0) {
+  if (!is.finite(smooth_h) || smooth_h <= 0) return(y)
+  dt <- median(diff(t_min), na.rm = TRUE); k <- max(3L, as.integer(round(smooth_h * 60 / dt)))
+  if (k %% 2 == 0) k <- k + 1L
+  ok <- is.finite(y); ys <- rep(NA_real_, length(y))
+  ys[ok] <- as.numeric(stats::filter(y[ok], rep(1 / k, k), sides = 2))
+  ys
+}

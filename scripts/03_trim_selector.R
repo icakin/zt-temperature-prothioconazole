@@ -14,6 +14,10 @@
 #   tables/plot_exclude_points.csv and printed as a ready-to-paste EXCLUDE_POINTS
 #   block for 04_oxygen_fits.R. The currently-discarded samples (the EXCLUDE_POINTS
 #   already in 04_oxygen_fits.R) are RESTORED on startup from that CSV.
+# - DENOISE: "centred moving average, hours" (0 = raw) smooths every curve
+#   before display, guide fit and auto-detect; one value for the whole set,
+#   saved as the smooth_h column of manual_fit_windows.csv and applied by the
+#   fitting script (e.g. 46_ptc_sham_rates.R) so what you trim is what is fitted.
 # - Curves are keyed by T + Dose + Replicate (this project has no "Clade").
 # - Persists: reloads tables/manual_fit_windows.csv + plot_exclude_points.csv.
 #
@@ -293,11 +297,14 @@ curves <- long %>%
   dplyr::arrange(T, .dose_key(Dose), Replicate) %>%
   dplyr::mutate(label = sprintf("T=%g  Dose=%s  %s", T, Dose, Replicate))
 
-# preload existing manual windows
+# preload existing manual windows (and the denoising width saved with them)
 init <- data.frame(key = character(0), fit_start = numeric(0), fit_end = numeric(0),
                    stringsAsFactors = FALSE)
+init_smooth_h <- 0
 if (file.exists(out_csv)) {
   prev <- tryCatch(readr::read_csv(out_csv, show_col_types = FALSE), error = function(e) NULL)
+  if (!is.null(prev) && "smooth_h" %in% names(prev) && any(is.finite(prev$smooth_h)))
+    init_smooth_h <- prev$smooth_h[is.finite(prev$smooth_h)][1]
   if (!is.null(prev) && all(c("T", "Dose", "Replicate") %in% names(prev))) {
     init <- prev %>%
       dplyr::mutate(key = paste(as.numeric(T), as.character(Dose), toupper(Replicate), sep = "_"),
@@ -329,6 +336,9 @@ ui <- fluidPage(
                column(6, actionButton("nxt",  "Next ▶", width = "100%"))),
       br(),
       radioButtons("mode", "Click sets:", c("Start", "End"), selected = "Start", inline = TRUE),
+      numericInput("smooth_h", "Denoise: centred moving average, hours (0 = raw)",
+                   value = init_smooth_h, min = 0, max = 12, step = 0.5),
+      helpText("One value for the whole curve set; it is saved with the windows and applied by the fitting script. Grey = raw readings, black = denoised trace (what is trimmed and fitted)."),
       checkboxInput("show_guide", "Show model guide curve (blue)", value = TRUE),
       checkboxInput("show_exp", "Show suggested exponential phase (orange dotted)", value = TRUE),
       numericInput("exp_frac", "Suggested end at % of draw-down (from your start)",
@@ -419,6 +429,22 @@ server <- function(input, output, session) {
     if (nrow(r) == 0) list(fit_start = NA_real_, fit_end = NA_real_)
     else list(fit_start = r$fit_start[1], fit_end = r$fit_end[1])
   }
+  # Denoised copy of one curve: centred moving average of input$smooth_h hours
+  # (0 = raw). Everything downstream (plot, guide fit, auto-detect, R2 readout)
+  # works on this, so the windows are set on what will be fitted.
+  smooth_curve <- function(d, h) {
+    if (is.null(h) || !is.finite(h) || h <= 0) return(d)
+    d <- d[order(d$Time), , drop = FALSE]
+    dt <- stats::median(diff(d$Time), na.rm = TRUE)
+    k  <- max(3L, as.integer(round(h * 60 / dt))); if (k %% 2 == 0) k <- k + 1L
+    d$Oxygen <- as.numeric(stats::filter(d$Oxygen, rep(1 / k, k), sides = 2))
+    d[is.finite(d$Oxygen), , drop = FALSE]
+  }
+  curve_data <- function(k) {
+    d <- long %>% dplyr::filter(key == k, is.finite(Time), is.finite(Oxygen)) %>% dplyr::arrange(Time)
+    smooth_curve(d, input$smooth_h)
+  }
+
   set_val <- function(k, side, val) {
     w <- wins()
     if (!(k %in% w$key)) w <- rbind(w, data.frame(key = k, fit_start = NA_real_, fit_end = NA_real_))
@@ -465,8 +491,7 @@ server <- function(input, output, session) {
 
   observeEvent(input$auto_one, {
     k <- input$curve
-    d <- long %>% dplyr::filter(key == k, is.finite(Time), is.finite(Oxygen)) %>%
-      dplyr::arrange(Time)
+    d <- curve_data(k)
     sd_frac <- (if (is.null(input$start_drawdown)) 5 else input$start_drawdown) / 100
     se <- auto_detect_window(d$Time, d$Oxygen, input$r2_target, input$rmse_max,
                              input$min_pts, input$start_search,
@@ -489,8 +514,7 @@ server <- function(input, output, session) {
     withProgress(message = "Auto-detecting all curves...", value = 0, {
       for (i in seq_len(n)) {
         k <- curves$key[i]
-        d <- long %>% dplyr::filter(key == k, is.finite(Time), is.finite(Oxygen)) %>%
-          dplyr::arrange(Time)
+        d <- curve_data(k)
         se <- auto_detect_window(d$Time, d$Oxygen, input$r2_target, input$rmse_max,
                                  input$min_pts, input$start_search,
                                  start_mode = input$start_mode, start_drawdown_frac = sd_frac,
@@ -514,8 +538,7 @@ server <- function(input, output, session) {
   # it (R2 and RMSE). Shared by the plot guide and the readout below the plot.
   winfit <- reactive({
     k <- input$curve
-    d <- long %>% dplyr::filter(key == k, is.finite(Time), is.finite(Oxygen)) %>%
-      dplyr::arrange(Time)
+    d <- curve_data(k)
     a <- meta[meta$key == k, , drop = FALSE]
     r <- get_row(k)
     auto_start <- if (nrow(a)) a$auto_start[1] else NA_real_
@@ -556,8 +579,10 @@ server <- function(input, output, session) {
 
   output$plot <- renderPlot({
     k <- input$curve
-    d <- long %>% dplyr::filter(key == k, is.finite(Time), is.finite(Oxygen)) %>%
+    d_raw <- long %>% dplyr::filter(key == k, is.finite(Time), is.finite(Oxygen)) %>%
       dplyr::arrange(Time)
+    d <- curve_data(k)
+    denoised <- !is.null(input$smooth_h) && is.finite(input$smooth_h) && input$smooth_h > 0
     a <- meta[meta$key == k, , drop = FALSE]
     r <- get_row(k)
     is_excl <- k %in% excl()
@@ -600,8 +625,11 @@ server <- function(input, output, session) {
                        guide$Oxygen <= o2max + 0.12 * yrng, , drop = FALSE]
     }
 
-    p <- ggplot(d, aes(Time, Oxygen)) +
-      geom_point(size = 1.1, alpha = 0.7, colour = if (is_excl) "grey65" else "black") +
+    p <- ggplot(d, aes(Time, Oxygen))
+    if (denoised)
+      p <- p + geom_point(data = d_raw, aes(Time, Oxygen), size = 0.8, alpha = 0.35, colour = "grey75")
+    p <- p +
+      geom_point(size = if (denoised) 0.9 else 1.1, alpha = 0.7, colour = if (is_excl) "grey65" else "black") +
       labs(title = curves$label[match(k, curves$key)],
            subtitle = if (is_excl) "EXCLUDED - not in plots / SS fits" else NULL,
            x = "Time (min)", y = expression("O"[2]*" (mg/L)")) +
@@ -667,10 +695,11 @@ server <- function(input, output, session) {
   win_df <- reactive({
     w <- wins()
     if (nrow(w) == 0) return(curves[0, c("T", "Dose", "Replicate")] %>%
-                               dplyr::mutate(fit_start = numeric(0), fit_end = numeric(0)))
+                               dplyr::mutate(fit_start = numeric(0), fit_end = numeric(0), smooth_h = numeric(0)))
     curves %>% dplyr::inner_join(w, by = "key") %>%
       dplyr::arrange(T, .dose_key(Dose), Replicate) %>%
-      dplyr::select(T, Dose, Replicate, fit_start, fit_end)
+      dplyr::select(T, Dose, Replicate, fit_start, fit_end) %>%
+      dplyr::mutate(smooth_h = if (is.null(input$smooth_h) || !is.finite(input$smooth_h)) 0 else input$smooth_h)
   })
 
   output$count <- renderText(sprintf("Manual windows set: %d curve(s)", nrow(win_df())))
