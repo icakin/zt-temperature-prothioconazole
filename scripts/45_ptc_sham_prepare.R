@@ -20,15 +20,19 @@
 #            (e.g. P2S_R2D1); blanks as bV_/bS_.
 #          tables/aox/ptc_sham/Oxygen_All_Long.csv
 #          tables/aox/ptc_sham/Oxygen_Trimmed_Series_Metadata.csv
-#            what 03_trim_selector.R needs to show these curves:
+#            what 03_trim_selector.R needs to show these curves. The Oxygen
+#            column is the PREPARED trace (handling-step offset removed and a
+#            PS_SMOOTH_H h moving average, see prep_trace in aox_common.R), so
+#            the windows are set on exactly what 46 fits:
 #              Rscript scripts/03_trim_selector.R tables/aox/ptc_sham
 #            It writes tables/aox/ptc_sham/manual_fit_windows.csv, which
 #            46_ptc_sham_rates.R uses when present.
 #          tables/aox/ptc_sham_fit_windows_auto.csv
 #            rule-based windows (post-equilibration peak -> before O2 falls
-#            under 2.5 mg/L, and before the 41 h handling step on the 27 C
-#            plates); the reference lines in the selector and the fallback
-#            for 46 when no manual windows exist.
+#            under 2.5 mg/L, and no later than 40.5 h on the 27 C plates so
+#            all conditions are fitted over the same stretch); the reference
+#            lines in the selector and the fallback for 46 when no manual
+#            windows exist.
 #          tables/aox/ptc_sham_steps.csv
 #            the plates were taken out of the incubator for an interim export
 #            at ~41 h; the reading jumps when they go back. Per-well time and
@@ -50,7 +54,10 @@ ps_layout <- function() {
   })
   data.frame(well = w, condition = unname(cond), stringsAsFactors = FALSE)
 }
-STEP_LO <- 40; STEP_HI <- 43; O2_FLOOR <- 2.5; PRE_STEP_END_27 <- 40.5
+STEP_LO <- 40; STEP_HI <- 43; O2_FLOOR <- 2.5
+MAX_END_27 <- 40.5   # uniform latest end on the 27 C plates (h): the vehicle wells
+                     # approach depletion by then, and r is only comparable across
+                     # conditions when the windows cover the same stretch of the run
 
 lay <- ps_layout()
 dir.create(file.path(ROOT, "data/aox"), showWarnings = FALSE, recursive = TRUE)
@@ -88,18 +95,22 @@ for (temp in c(15, 27)) {
         T = temp, replicate = rep, well = w, condition = cond,
         step_time_h = round(st_t, 2), step_mgL = round(st_dy, 3))
       if (substr(cond, 1, 1) == "b") next          # blanks are not fitted
+      # prepared trace (step offset + PS_SMOOTH_H h moving average): what the
+      # selector shows and what 46 fits
+      yp <- prep_trace(t_h * 60, o2, st_t, st_dy)
+      keep <- is.finite(yp)
       long_all[[length(long_all) + 1]] <- data.frame(
-        File = basename(f), Time = round(t_h * 60, 2), T = temp, Dose = cond,
-        Replicate = sprintf("R%d%s", rep, w), Oxygen = o2)
-      # start: post-equilibration maximum of a 1 h moving average, searched after
+        File = basename(f), Time = round(t_h[keep] * 60, 2), T = temp, Dose = cond,
+        Replicate = sprintf("R%d%s", rep, w), Oxygen = yp[keep])
+      # start: post-equilibration maximum of the prepared trace, searched after
       # the first 2.5 h (the trace starts high and falls while the vial equilibrates)
-      sm1 <- as.numeric(stats::filter(o2, rep(1/51, 51), sides = 2)); sm1[is.na(sm1)] <- -Inf
+      sm1 <- yp; sm1[!is.finite(sm1)] <- -Inf
       cand <- which(t_h > 2.5 & t_h < max(t_h)/3)
       pk <- cand[which.max(sm1[cand])]; t0 <- t_h[pk]
-      sm <- as.numeric(stats::filter(o2, rep(1/201, 201), sides = 2))
-      below <- which(sm < O2_FLOOR & t_h > t0)
+      sm <- yp
+      below <- which(is.finite(sm) & sm < O2_FLOOR & t_h > t0)
       t1 <- if (length(below)) t_h[below[1]] else max(t_h)
-      if (temp == 27) t1 <- min(t1, PRE_STEP_END_27)
+      if (temp == 27) t1 <- min(t1, MAX_END_27)
       meta_all[[length(meta_all) + 1]] <- data.frame(
         T = temp, Dose = cond, Replicate = sprintf("R%d%s", rep, w),
         main_run_start_time = round(t0 * 60, 1), steepest_drop_time = round(t1 * 60, 1))

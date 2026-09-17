@@ -11,10 +11,11 @@
 # 03_trim_selector.R tables/aox/ptc_sham); if that file is absent the
 # rule-based intervals from 45 are used and the output says so.
 #
-# Handling step: the plates were taken out for an interim export at ~41 h and
-# the reading jumps when they go back (tables/aox/ptc_sham_steps.csv). When a
-# fitting interval spans the step, the post-step readings are shifted by the
-# measured jump before fitting (an offset only; the shift is recorded per well).
+# Trace preparation (prep_trace in aox_common.R, identical to what the trim
+# selector displayed): the ~41 h handling-step offset is removed
+# (tables/aox/ptc_sham_steps.csv) and a PS_SMOOTH_H = 4 h centred moving
+# average removes the 3-4 h re-aeration sawtooth on the 27 C plates. The same
+# fit on the unsmoothed trace is kept as r_per_h_raw (sensitivity).
 #
 # Statistics (prespecified in experiments/ptc_sham_mediation_design.pdf):
 #   per plate, condition mean r over wells; relative growth r/r_V;
@@ -62,20 +63,22 @@ for (temp in c(15, 27)) {
     k <- paste(temp, cond, repw)
     w <- win[win$T == temp & win$Dose == cond & win$Replicate == repw, ][1, ]
     if (!nrow(w) || is.na(w$fit_start)) { message("no window: ", k); next }
-    y <- d[[cv]]; tt <- d$Time
+    y0 <- d[[cv]]; tt <- d$Time
     st <- steps[steps$T == temp & steps$Replicate == repw, ][1, ]
-    shifted <- 0
-    if (isTRUE(w$fit_end > st$step_time_h * 60)) {           # window spans the handling step
-      y[tt > st$step_time_h * 60] <- y[tt > st$step_time_h * 60] - st$step_mgL; shifted <- st$step_mgL
-    }
+    shifted <- if (isTRUE(w$fit_end > st$step_time_h * 60)) st$step_mgL else 0
+    y  <- prep_trace(tt, y0, st$step_time_h, st$step_mgL)              # step offset + smoothing (primary)
+    yr <- prep_trace(tt, y0, st$step_time_h, st$step_mgL, smooth_h = 0) # step offset only (sensitivity)
     m <- tt >= w$fit_start & tt <= w$fit_end & is.finite(y)
     f <- fit_o2_model(tt[m], y[m])
     if (is.null(f)) { message("fit failed: ", k); next }
+    mr <- tt >= w$fit_start & tt <= w$fit_end & is.finite(yr)
+    fr <- fit_o2_model(tt[mr], yr[mr]); r_raw <- if (is.null(fr)) NA_real_ else fr$r_per_h
     rows[[length(rows) + 1]] <- data.frame(
       temp = temp, replicate = as.integer(substr(repw, 2, 2)), well = substr(repw, 3, 4), condition = cond,
       drug_mgL = c(V = 0, S = 0, P2 = 2, P2S = 2, P4 = 4, P4S = 4)[[cond]],
       sham_mM = if (cond %in% c("S", "P2S", "P4S")) 0.2 else 0,
       r_per_h = f$r_per_h, K = f$K, R2 = f$R2, RMSE = f$RMSE, n_pts = f$n_pts,
+      r_per_h_raw = r_raw, smooth_h = PS_SMOOTH_H,
       fit_start = w$fit_start, fit_end = w$fit_end, step_shift_mgL = shifted,
       excluded = k %in% excl, stringsAsFactors = FALSE)
   }
@@ -130,8 +133,9 @@ write.csv(S, file.path(ROOT, "tables/aox/ptc_sham_interaction_tests.csv"), row.n
 
 cat(sprintf("ptc_sham: %d wells fitted (%d excluded), windows: %s, mean R2 = %.4f, min R2 = %.4f\n",
             nrow(W), sum(W$excluded), win_src, mean(W$R2), min(W$R2)))
-cat(sprintf("  step correction applied to %d wells (median |shift| %.2f mg/L)\n",
-            sum(W$step_shift_mgL != 0), median(abs(W$step_shift_mgL[W$step_shift_mgL != 0]))))
+cat(sprintf("  step correction applied to %d wells (median |shift| %.2f mg/L); smoothing %g h; raw-vs-smoothed r: median change %.1f%%, max %.1f%%\n",
+            sum(W$step_shift_mgL != 0), median(abs(W$step_shift_mgL[W$step_shift_mgL != 0])), PS_SMOOTH_H,
+            100 * median(abs(W$r_per_h / W$r_per_h_raw - 1), na.rm = TRUE), 100 * max(abs(W$r_per_h / W$r_per_h_raw - 1), na.rm = TRUE)))
 cat("\nrelative growth rate r/r_V (plate means):\n")
 rel <- reshape(M[, c("temp", "replicate", "condition", "r_rel")], idvar = c("temp", "replicate"),
                timevar = "condition", direction = "wide")
