@@ -21,3 +21,4 @@ manuscript/*.log
 manuscript/*.tex
 manuscript/*.out
 manuscript/*.toc
+Rplots.pdf

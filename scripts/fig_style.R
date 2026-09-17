@@ -2,7 +2,18 @@
 # Mirror of fig_style.py — SAME hex values, SAME font, SAME sizes.
 suppressPackageStartupMessages({library(ggplot2)})
 
-FONT <- "DejaVu Sans"
+# Font. The figures are set in DejaVu Sans where it is installed. On systems
+# without it (macOS, typically) cairo_pdf cannot fall back and fails with
+# "failed to find or load PDF CID font", so resolve to the first family that is
+# actually present. Set FIG_FONT in the environment to force a specific family.
+FONT <- local({
+  forced <- Sys.getenv("FIG_FONT", "")
+  if (nzchar(forced)) return(forced)
+  avail <- tryCatch(unique(systemfonts::system_fonts()$family), error = function(e) NULL)
+  if (is.null(avail)) return("sans")
+  hit <- intersect(c("DejaVu Sans", "Helvetica Neue", "Helvetica", "Arial"), avail)
+  if (length(hit)) hit[1] else "sans"
+})
 
 # temperature: ordered cool->warm ramp (7 levels)
 TEMPS     <- c(15, 18, 21, 24, 26, 27, 28)
