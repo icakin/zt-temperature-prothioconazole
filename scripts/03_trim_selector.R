@@ -20,6 +20,8 @@
 # RUN:
 #   RStudio: open this file -> "Run App".
 #   Terminal: Rscript scripts/03_trim_selector.R
+#   Other curve sets prepared in the same format (see 45_ptc_sham_prepare.R):
+#             Rscript scripts/03_trim_selector.R tables/aox/ptc_sham
 #
 # Needs 01_longdata.R + 02_trimming.R to have run (for the data + metadata).
 #
@@ -50,6 +52,17 @@
 # base_dir = parent of scripts/ (same rule as 00_config.R); tables/ lives there.
 base_dir   <- dirname(.script_dir)
 tables_dir <- file.path(base_dir, "tables", "physiology")
+
+# Optional: point the selector at another set of curves prepared in the same
+# two-file format (Oxygen_All_Long.csv + Oxygen_Trimmed_Series_Metadata.csv),
+# e.g. the prothioconazole x SHAM factorial written by 45_ptc_sham_prepare.R:
+#     Rscript scripts/03_trim_selector.R tables/aox/ptc_sham
+# The manual windows and the exclusion list are then written into that folder.
+.cli <- commandArgs(trailingOnly = TRUE)
+if (length(.cli) && nzchar(.cli[1])) {
+  .alt <- if (dir.exists(.cli[1])) .cli[1] else file.path(base_dir, .cli[1])
+  if (dir.exists(.alt)) tables_dir <- normalizePath(.alt, mustWork = FALSE)
+}
 
 # Fallback ONLY to tables/ dirs relative to the working directory — never to any
 # hard-coded external location — so files can only ever land inside this project.

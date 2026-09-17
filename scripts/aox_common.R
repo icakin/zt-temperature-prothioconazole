@@ -57,3 +57,31 @@ load_azide_plates <- function(root = ".") {
   tr$condition <- factor(tr$condition, levels = AZ_ORDER)
   tr
 }
+
+# --- the manuscript oxygen model, fitted exactly as in 04_oxygen_fits.R and
+# 41_sham_rates.R (bounded nlsLM); shared by 46_ptc_sham_rates.R and the
+# figure scripts. tt in minutes; returns r in h^-1.
+resp_model <- function(t, r, K, O2_0) O2_0 + (K/r) * (1 - exp(r * t))
+fit_o2_model <- function(tt, yy) {
+  if (!requireNamespace("minpack.lm", quietly = TRUE)) stop("minpack.lm is required")
+  t0 <- tt - min(tt); sl <- median(diff(yy) / diff(t0))
+  st <- list(r = 1e-3, K = min(max(abs(sl), 1e-6), 1), O2_0 = yy[1])
+  f <- try(minpack.lm::nlsLM(yy ~ resp_model(t0, r, K, O2_0), start = st,
+                 lower = c(r = 1e-6, K = 1e-10, O2_0 = min(yy) - 1),
+                 upper = c(r = 0.15,  K = 1,     O2_0 = max(yy) + 1),
+                 control = minpack.lm::nls.lm.control(maxiter = 200, ftol = 1e-12, ptol = 1e-12)),
+           silent = TRUE)
+  if (inherits(f, "try-error")) return(NULL)
+  p <- coef(f); pred <- resp_model(t0, p[["r"]], p[["K"]], p[["O2_0"]])
+  rss <- sum((yy - pred)^2); sst <- sum((yy - mean(yy))^2)
+  list(r_per_h = unname(p[["r"]]) * 60, K = unname(p[["K"]]), O2_0 = unname(p[["O2_0"]]),
+       R2 = if (sst > 1e-12) 1 - rss/sst else NA_real_, RMSE = sqrt(rss/length(yy)),
+       n_pts = length(yy), pred = pred)
+}
+
+# prothioconazole x SHAM factorial (45/46/57/74)
+PS_ORDER <- c("V", "S", "P2", "P2S", "P4", "P4S")
+PS_LAB   <- c(V = "Vehicle", S = "SHAM", P2 = "PTC 2 mg/L", P2S = "PTC 2 + SHAM",
+              P4 = "PTC 4 mg/L", P4S = "PTC 4 + SHAM")
+PS_COL   <- c(V = "#8C8C8C", S = "#433D84", P2 = "#E5A24A", P2S = "#7B5EA7",
+              P4 = "#B2182B", P4S = "#2A1A5E")
