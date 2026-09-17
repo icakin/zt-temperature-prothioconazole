@@ -176,7 +176,14 @@ auto_detect_window <- function(tt, yy, r2_target, rmse_max, min_pts,
                                start_search = 60, start_mode = "peak",
                                start_drawdown_frac = 0.05,
                                t_peak_min = 10, t_peak_max = 200,
-                               start_step = 15, end_step = 6) {
+                               start_step = 15, end_step = 6,
+                               end_mode = "longest", r_tol = 0.05) {
+  # end_mode "longest": the longest window with R2 >= r2_target (and RMSE <= rmse_max).
+  # end_mode "stable_r": fit r for every candidate end; find the longest run of
+  #   consecutive ends over which r stays within +-r_tol of the run's median (and
+  #   R2 >= r2_target); the window ends where that plateau ends. This picks the
+  #   interval over which the estimate no longer depends on where you stop, i.e.
+  #   the exponential phase, and ignores the later bend towards depletion.
   ok <- is.finite(tt) & is.finite(yy)
   tt <- tt[ok]; yy <- yy[ok]
   ord <- order(tt); tt <- tt[ord]; yy <- yy[ord]
@@ -205,6 +212,39 @@ auto_detect_window <- function(tt, yy, r2_target, rmse_max, min_pts,
 
   best <- list(start = NA_real_, end = NA_real_, len = -Inf, r2 = -Inf)
   fb   <- list(start = NA_real_, end = NA_real_, r2 = -Inf)   # best-R2 fallback
+  if (identical(end_mode, "stable_r")) {
+    for (s in starts) {
+      after <- which(tt > s)
+      if (length(after) < min_pts) next
+      cand <- after[seq(min_pts, length(after), by = end_step)]
+      rr <- rep(NA_real_, length(cand)); ok2 <- rep(FALSE, length(cand))
+      for (j in seq_along(cand)) {
+        idx <- which(tt >= s & tt <= tt[cand[j]])
+        fr <- fit_resp(tt[idx], yy[idx])
+        if (isTRUE(fr$ok) && is.finite(fr$r2)) {
+          rr[j] <- fr$co[["r"]]
+          ok2[j] <- fr$r2 >= r2_target && (!is.finite(rmse_max) || (is.finite(fr$rmse) && fr$rmse <= rmse_max))
+          if (fr$r2 > fb$r2) { fb$r2 <- fr$r2; fb$start <- s; fb$end <- tt[cand[j]] }
+        }
+      }
+      # longest run of consecutive ends with r within +-r_tol of the run median
+      n_c <- length(cand)
+      for (a in seq_len(n_c)) {
+        if (!ok2[a]) next
+        for (b in n_c:a) {
+          if (!all(ok2[a:b])) next
+          seg <- rr[a:b]; md <- median(seg)
+          if (all(abs(seg - md) <= r_tol * abs(md))) {
+            len <- tt[cand[b]] - s
+            if (len > best$len) best <- list(start = s, end = tt[cand[b]], len = len, r2 = NA_real_)
+            break
+          }
+        }
+      }
+    }
+    if (is.finite(best$len) && best$len > 0) return(c(best$start, best$end))
+    return(c(fb$start, fb$end))
+  }
   for (s in starts) {
     after <- which(tt > s)
     if (length(after) < min_pts) next
@@ -310,6 +350,15 @@ ui <- fluidPage(
                    c("Peak (+ optional forward search)" = "peak",
                      "Fixed % drawdown from peak (consistent)" = "drawdown"),
                    selected = "peak"),
+      numericInput("t_peak_max", "Peak search up to (min)", value = 200, min = 30, step = 30),
+      radioButtons("end_mode", "End rule:",
+                   c("Longest window with R2 >= target" = "longest",
+                     "Stable r (fitted r no longer changes with the end)" = "stable_r"),
+                   selected = "longest"),
+      conditionalPanel(
+        condition = "input.end_mode == 'stable_r'",
+        numericInput("r_tol", "r tolerance (fraction)", value = 0.05, min = 0.005, max = 0.5, step = 0.005)
+      ),
       conditionalPanel(
         condition = "input.start_mode == 'drawdown'",
         numericInput("start_drawdown", "Start drawdown %", value = 5,
@@ -319,7 +368,7 @@ ui <- fluidPage(
         column(6, actionButton("auto_one", "Auto THIS curve", width = "100%")),
         column(6, actionButton("auto_all", "Auto ALL curves", width = "100%"))
       ),
-      helpText("Start = O2 peak; end = longest window keeping R2 >= target. You can still nudge afterwards."),
+      helpText("Start = O2 peak (or fixed drawdown); end = longest window keeping R2 >= target, or the end of the plateau over which the fitted r is stable. You can still nudge afterwards."),
       hr(),
       strong("Trim ALL by time interval"),
       fluidRow(
@@ -421,7 +470,9 @@ server <- function(input, output, session) {
     sd_frac <- (if (is.null(input$start_drawdown)) 5 else input$start_drawdown) / 100
     se <- auto_detect_window(d$Time, d$Oxygen, input$r2_target, input$rmse_max,
                              input$min_pts, input$start_search,
-                             start_mode = input$start_mode, start_drawdown_frac = sd_frac)
+                             start_mode = input$start_mode, start_drawdown_frac = sd_frac,
+                             t_peak_max = input$t_peak_max, end_mode = input$end_mode,
+                             r_tol = if (is.null(input$r_tol)) 0.05 else input$r_tol)
     if (all(is.finite(se))) {
       set_val(k, "fit_start", round(se[1], 1))
       set_val(k, "fit_end",   round(se[2], 1))
@@ -442,7 +493,9 @@ server <- function(input, output, session) {
           dplyr::arrange(Time)
         se <- auto_detect_window(d$Time, d$Oxygen, input$r2_target, input$rmse_max,
                                  input$min_pts, input$start_search,
-                                 start_mode = input$start_mode, start_drawdown_frac = sd_frac)
+                                 start_mode = input$start_mode, start_drawdown_frac = sd_frac,
+                                 t_peak_max = input$t_peak_max, end_mode = input$end_mode,
+                                 r_tol = if (is.null(input$r_tol)) 0.05 else input$r_tol)
         if (all(is.finite(se))) {
           if (!(k %in% w$key))
             w <- rbind(w, data.frame(key = k, fit_start = NA_real_, fit_end = NA_real_))
