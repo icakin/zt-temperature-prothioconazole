@@ -23,7 +23,8 @@
 # =============================================================================
 suppressPackageStartupMessages(library(minpack.lm))
 ARGS <- commandArgs(trailingOnly = TRUE); ROOT <- if (length(ARGS)) ARGS[1] else "."
-WIDTHS_H <- c(2, 4)            # moving-average widths (h): bracket the 1.5-4 h cycle
+WIDTHS_H <- c(2, 4, 12)        # moving-average widths (h): bracket the cycle and
+                               # the width used in the primary analysis
 DROP_DOSE <- 0.35              # as in 56_figure6.R
 
 resp_model <- function(t, r, K, O2_0) O2_0 + (K/r) * (1 - exp(r * t))
@@ -54,7 +55,11 @@ noise_stats <- function(t_h, y) {
     late_p2p = diff(range(r[seq(floor(2*length(r)/3), length(r))])))
 }
 
-win <- read.csv(file.path(ROOT, "tables/aox/sham_fit_windows.csv"), stringsAsFactors = FALSE)
+# Intervals: the hand-selected windows used by 41_sham_rates.R, so this test is
+# run on exactly the curves and intervals behind Figure 6a,b.
+MANW <- file.path(ROOT, "tables/aox/sham/manual_fit_windows.csv")
+win  <- read.csv(if (file.exists(MANW)) MANW else
+                 file.path(ROOT, "tables/aox/sham_fit_windows.csv"), stringsAsFactors = FALSE)
 rows <- list(); noise <- list()
 for (temp in c(15, 27)) {
   d <- read.csv(file.path(ROOT, sprintf("data/aox/sham_%d_Oxygen.csv", temp)), check.names = FALSE)
@@ -74,8 +79,9 @@ for (temp in c(15, 27)) {
     })
     rows[[length(rows) + 1]] <- data.frame(
       temp, dose_mM = if (dose == "Control") 0 else as.numeric(dose), culture = rep,
-      r_raw = r_raw, r_dn_2h = r_dn[1], r_dn_4h = r_dn[2],
-      pct_change_2h = 100*(r_dn[1]/r_raw - 1), pct_change_4h = 100*(r_dn[2]/r_raw - 1))
+      r_raw = r_raw, r_dn_2h = r_dn[1], r_dn_4h = r_dn[2], r_dn_12h = r_dn[3],
+      pct_change_2h = 100*(r_dn[1]/r_raw - 1), pct_change_4h = 100*(r_dn[2]/r_raw - 1),
+      pct_change_12h = 100*(r_dn[3]/r_raw - 1))
   }
 }
 res <- do.call(rbind, rows); res <- res[order(res$temp, res$dose_mM, res$culture), ]
@@ -94,14 +100,14 @@ contrast <- function(col) {
   data.frame(rates = col, slope15 = mean(s15), slope27 = mean(s27), diff = mean(s27) - mean(s15),
              welch_P = tt$p.value, n27_negative = sum(s27 < 0), ctrl_CV15 = cvc[1], ctrl_CV27 = cvc[2])
 }
-summ <- do.call(rbind, lapply(c("r_raw", "r_dn_2h", "r_dn_4h"), contrast))
+summ <- do.call(rbind, lapply(c("r_raw", "r_dn_2h", "r_dn_4h", "r_dn_12h"), contrast))
 nz <- aggregate(cbind(resid_sd, period_h, late_p2p) ~ temp, noise, median)
 write.csv(summ, file.path(ROOT, "tables/aox/sham_denoise_summary.csv"), row.names = FALSE)
 
 cat("Residual noise after 6 h trend removal (plate medians):\n"); print(nz, row.names = FALSE)
 ok <- res$dose_mM != DROP_DOSE      # 0.35 mM: non-identifiable at 27 C, excluded in the paper
-cat("\nPer-curve change in r after denoising (36 curves entering Figure 6, 4 h average):\n")
-print(summary(res$pct_change_4h[ok]))
+cat("\nPer-curve change in r after denoising (curves entering Figure 6, 12 h average):\n")
+print(summary(res$pct_change_12h[ok]))
 cat(sprintf("  |change| > 1%%: %d of %d curves;  > 5%%: %d\n",
-            sum(abs(res$pct_change_4h[ok]) > 1), sum(ok), sum(abs(res$pct_change_4h[ok]) > 5)))
+            sum(abs(res$pct_change_12h[ok]) > 1), sum(ok), sum(abs(res$pct_change_12h[ok]) > 5)))
 cat("\nFigure 6b statistic:\n"); print(summ, row.names = FALSE, digits = 4)

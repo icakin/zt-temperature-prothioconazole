@@ -25,7 +25,7 @@
 #            the selector and saved with the windows):
 #              Rscript scripts/03_trim_selector.R tables/aox/ptc_sham
 #            It writes tables/aox/ptc_sham/manual_fit_windows.csv, which
-#            46_ptc_sham_rates.R uses when present.
+#            47_ptc_sham_rates.R uses when present.
 #          tables/aox/ptc_sham_fit_windows_auto.csv
 #            rule-based windows (post-equilibration peak -> before O2 falls
 #            under 2.5 mg/L, and before the 41 h handling step on the 27 C
@@ -128,4 +128,4 @@ cat(sprintf("ptc_sham: %d curves (%d per temperature) written; blanks: %d wells\
 cat("handling step at ~41 h, median size (mg/L) by plate:\n")
 print(aggregate(step_mgL ~ T + replicate, steps[substr(steps$condition, 1, 1) != "b", ], median), row.names = FALSE)
 cat("Next: Rscript scripts/03_trim_selector.R tables/aox/ptc_sham   (set the windows by hand)\n",
-    "      Rscript scripts/46_ptc_sham_rates.R\n")
+    "      Rscript scripts/47_ptc_sham_rates.R\n")

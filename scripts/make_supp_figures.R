@@ -23,7 +23,8 @@ STEPS <- list(
   list(figs = 15,         scripts = "71_figureS15.R"),
   list(figs = 16,         scripts = "72_figureS16.R"),
   list(figs = 17,         scripts = "73_figureS17.R"),
-  list(figs = 18,         scripts = "74_figureS18.R"))
+  list(figs = 18,         scripts = "74_figureS18.R"),
+  list(figs = 19,         scripts = "75_figureS19.R"))
 
 args <- commandArgs(trailingOnly = TRUE)
 all_figs <- sort(unique(unlist(lapply(STEPS, `[[`, "figs"))))

@@ -59,7 +59,7 @@ load_azide_plates <- function(root = ".") {
 }
 
 # --- the manuscript oxygen model, fitted exactly as in 04_oxygen_fits.R and
-# 41_sham_rates.R (bounded nlsLM); shared by 46_ptc_sham_rates.R and the
+# 41_sham_rates.R (bounded nlsLM); shared by 47_ptc_sham_rates.R and the
 # figure scripts. tt in minutes; returns r in h^-1.
 resp_model <- function(t, r, K, O2_0) O2_0 + (K/r) * (1 - exp(r * t))
 fit_o2_model <- function(tt, yy) {
@@ -106,4 +106,91 @@ smooth_ma <- function(t_min, y, smooth_h = 0) {
   ok <- is.finite(y); ys <- rep(NA_real_, length(y))
   ys[ok] <- as.numeric(stats::filter(y[ok], rep(1 / k, k), sides = 2))
   ys
+}
+
+# =============================================================================
+# Rule-based fitting intervals for the prothioconazole x SHAM factorial (45-47,
+# 57, 74). No interval is chosen by hand: ps_window() derives one from the trace
+# by a named rule, so the same code produces the primary intervals in
+# 47_ptc_sham_rates.R and every alternative in 48_ptc_sham_window_rules.R.
+#
+# Bounds common to every rule, applied first:
+#   start >= PS_MIN_START   the first ~3 h is the vial equilibrating (O2 falls
+#                           from ~15 to ~11 mg/L and then flattens); that fall
+#                           is decelerating while the model is accelerating, so
+#                           including it biases r down and K up.
+#   end    <  the time O2 first drops below PS_O2_FLOOR, i.e. before the trace
+#                           becomes a plateau that carries no rate information.
+#
+# Rules:
+#   stable_r      each curve's own exponential phase: fit r for a series of end
+#                 points and keep the longest run over which r stays within
+#                 PS_R_TOL of that run's median. Adapts to lag and to early
+#                 stationary phase, and stops where the curve leaves exponential
+#                 growth, without any reference to the result.
+#   fixed(a,b)    the same clock interval for every curve (minutes).
+#   draw(lo,hi)   between lo and hi of that curve's own total oxygen drawdown.
+#   peak(dur)     from the post-equilibration maximum for dur minutes.
+# =============================================================================
+PS_MIN_START <- 180      # minutes
+PS_O2_FLOOR  <- 2.5      # mg/L
+PS_R_TOL     <- 0.05     # stable_r: fractional tolerance on r
+PS_MIN_PTS   <- 120      # minimum points in a fitted interval
+
+ps_bounds <- function(t_min, o2) {
+  ok <- is.finite(o2) & is.finite(t_min)
+  t_min <- t_min[ok]; o2 <- o2[ok]
+  lo <- max(PS_MIN_START, min(t_min))
+  below <- which(o2 < PS_O2_FLOOR & t_min > lo)
+  hi <- if (length(below)) t_min[below[1]] else max(t_min)
+  c(lo, hi)
+}
+# post-equilibration maximum, searched inside the bounds
+ps_peak <- function(t_min, o2, bd) {
+  cand <- which(t_min >= bd[1] & t_min <= bd[1] + (bd[2] - bd[1]) / 3 & is.finite(o2))
+  if (!length(cand)) return(bd[1])
+  t_min[cand[which.max(o2[cand])]]
+}
+ps_window <- function(t_min, o2, rule = list(type = "stable_r")) {
+  ok <- is.finite(o2) & is.finite(t_min); t_min <- t_min[ok]; o2 <- o2[ok]
+  if (length(t_min) < PS_MIN_PTS) return(c(NA_real_, NA_real_, NA))
+  bd <- ps_bounds(t_min, o2)
+  if (!is.finite(bd[2]) || bd[2] - bd[1] < 60) return(c(NA_real_, NA_real_, NA))
+  fallback <- FALSE
+  w <- switch(rule$type,
+    fixed = c(max(bd[1], rule$a), min(bd[2], rule$b)),
+    peak  = { p <- ps_peak(t_min, o2, bd); c(p, min(bd[2], p + rule$dur)) },
+    draw  = { m <- t_min >= bd[1] & t_min <= bd[2]
+              top <- max(o2[m]); bot <- min(o2[m]); rng <- top - bot
+              if (rng <= 0) c(NA, NA) else {
+                s <- t_min[m][which(o2[m] <= top - rule$a * rng)[1]]
+                e <- t_min[m][which(o2[m] <= top - rule$b * rng)[1]]
+                c(if (is.na(s)) bd[1] else s, if (is.na(e)) bd[2] else e) } },
+    stable_r = {
+      s <- ps_peak(t_min, o2, bd)
+      idx <- which(t_min > s & t_min <= bd[2])
+      res <- c(NA, NA)
+      if (length(idx) >= PS_MIN_PTS) {
+        cand <- idx[seq(PS_MIN_PTS, length(idx), length.out = min(25, length(idx) %/% 20))]
+        rr <- sapply(cand, function(j) {
+          m <- t_min >= s & t_min <= t_min[j]
+          f <- fit_o2_model(t_min[m], o2[m]); if (is.null(f)) NA_real_ else f$r_per_h })
+        good <- is.finite(rr)
+        best <- -Inf
+        for (a in seq_along(cand)) if (good[a]) for (b in length(cand):a) {
+          if (!all(good[a:b])) next
+          seg <- rr[a:b]; md <- median(seg)
+          if (all(abs(seg - md) <= PS_R_TOL * abs(md))) {
+            len <- t_min[cand[b]] - s
+            if (len > best) { best <- len; res <- c(s, t_min[cand[b]]) }
+            break
+          }
+        }
+      }
+      if (!is.finite(res[1])) { fallback <- TRUE; res <- bd }   # no stable stretch: plate bounds
+      res
+    },
+    stop("unknown rule type: ", rule$type))
+  if (!all(is.finite(w)) || w[2] - w[1] < 60) { fallback <- TRUE; w <- bd }
+  c(w[1], w[2], fallback)
 }

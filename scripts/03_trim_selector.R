@@ -17,7 +17,7 @@
 # - DENOISE: "centred moving average, hours" (0 = raw) smooths the displayed
 #   curve, the guide fit and auto-detect. The value in force when a curve's
 #   window is set is stored with that curve (smooth_h in manual_fit_windows.csv)
-#   and applied per curve by the fitting script (e.g. 46_ptc_sham_rates.R), so
+#   and applied per curve by the fitting script (e.g. 47_ptc_sham_rates.R), so
 #   what you trim is what is fitted, and plates can use different widths.
 # - "Auto ALL applies to": all curves or one temperature only.
 # - Curves are keyed by T + Dose + Replicate (this project has no "Clade").

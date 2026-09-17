@@ -1,25 +1,28 @@
 #!/usr/bin/env Rscript
 # =============================================================================
-# 46_ptc_sham_rates.R -- growth rates and the interaction contrast for the
+# 47_ptc_sham_rates.R -- growth rates and the interaction contrast for the
 # prothioconazole x SHAM factorial (Figure 7, Figure S18).
 #
 # Every curve is fitted with the manuscript oxygen model
 #       O(t) = O2_0 + (K/r) * (1 - exp(r*t))
-# by bounded nonlinear least squares over its fitting interval, exactly as in
-# 04_oxygen_fits.R and 41_sham_rates.R. Intervals come from the trim selector
-# (tables/aox/ptc_sham/manual_fit_windows.csv, written by
-# 03_trim_selector.R tables/aox/ptc_sham); if that file is absent the
-# rule-based intervals from 45 are used and the output says so.
+# by bounded nonlinear least squares, as in 04_oxygen_fits.R and 41_sham_rates.R.
+#
+# Fitting intervals are NOT chosen by hand. Each is derived from the trace by
+# ps_window() in aox_common.R under the rule named in PRIMARY_RULE below, so the
+# analyst never sees a rate while choosing an interval. The primary rule is
+# peak + 36 h: each curve is fitted for 36 h from its own post-equilibration
+# maximum. The start adapts to a culture that lags; the duration is the longest
+# span the fastest wells can support, since the 27 C vehicle wells approach
+# oxygen depletion around 40 h. Above all it is symmetric: every condition on a
+# plate is fitted over the same span, so the vehicle and the slow drug + SHAM
+# wells are not measured over different phases of growth. 48_ptc_sham_window_rules.R
+# shows that rules which are not symmetric inflate the contrast (Fig. S19).
+# 48_ptc_sham_window_rules.R refits everything under several alternative rules
+# and reports the contrast under each (Fig. S19).
 #
 # Handling step: the plates were taken out for an interim export at ~41 h and
 # the reading jumps when they go back (tables/aox/ptc_sham_steps.csv). The
-# post-step readings are shifted by the measured jump (an offset only; recorded
-# per well where the interval spans it).
-# Denoising: the moving-average width chosen in the trim selector and saved per
-# curve as smooth_h in manual_fit_windows.csv is applied to that curve before fitting
-# (smooth_ma in aox_common.R; r is unbiased by a centred moving average under
-# this model). The fit of the same window on the undenoised trace is kept as
-# r_per_h_raw.
+# post-step readings are shifted by the measured jump (an offset only).
 #
 # Statistics (prespecified in experiments/ptc_sham_mediation_design.pdf):
 #   per plate, condition mean r over wells; relative growth r/r_V;
@@ -29,70 +32,48 @@
 #   potentiates the drug). The temperature question is I_27 - I_15 within each
 #   replicate. Primary: 2 mg/L; secondary: 4 mg/L and the two doses pooled.
 #
-# Inputs : data/aox/ptc_sham_{15,27}_Oxygen.csv, data/aox/ptc_sham_layout.csv,
-#          tables/aox/ptc_sham/manual_fit_windows.csv (or ..._fit_windows_auto.csv),
-#          tables/aox/ptc_sham/plot_exclude_points.csv (optional),
-#          tables/aox/ptc_sham_steps.csv
+# Inputs : tables/aox/ptc_sham_prepared_traces.csv.gz and ptc_sham_windows.csv
+#          (46_ptc_sham_prepared_traces.R); ptc_sham/plot_exclude_points.csv (optional)
 # Outputs: tables/aox/ptc_sham_well_rates.csv        one row per fitted well
 #          tables/aox/ptc_sham_condition_means.csv   plate x condition
-#          tables/aox/ptc_sham_interaction.csv       I per plate and dose,
-#                                                    I27 - I15 per replicate, tests
-# Run from the repository root:  Rscript scripts/46_ptc_sham_rates.R
+#          tables/aox/ptc_sham_interaction.csv       I per plate and dose
+#          tables/aox/ptc_sham_interaction_diff.csv  I27 - I15 per replicate
+#          tables/aox/ptc_sham_interaction_tests.csv tests
+# Run from the repository root:  Rscript scripts/47_ptc_sham_rates.R
 # =============================================================================
 ARGS <- commandArgs(trailingOnly = TRUE); ROOT <- if (length(ARGS)) ARGS[1] else "."
 source(file.path(ROOT, "scripts/aox_common.R"))
 
-MAN <- file.path(ROOT, "tables/aox/ptc_sham/manual_fit_windows.csv")
-AUTO <- file.path(ROOT, "tables/aox/ptc_sham_fit_windows_auto.csv")
-win_src <- if (file.exists(MAN)) "manual (trim selector)" else "rule-based (45_ptc_sham_prepare.R)"
-win <- read.csv(if (file.exists(MAN)) MAN else AUTO, stringsAsFactors = FALSE)
-win$Replicate <- toupper(win$Replicate)
-# denoising width chosen in the trim selector, stored per curve (0 = raw);
-# applied to each curve after the step offset
-if (!"smooth_h" %in% names(win)) win$smooth_h <- 0
-win$smooth_h[!is.finite(win$smooth_h)] <- 0
-if (file.exists(MAN)) {                      # fall back per curve to the auto window where none was set
-  auto <- read.csv(AUTO, stringsAsFactors = FALSE)
-  key <- function(d) paste(d$T, d$Dose, toupper(d$Replicate))
-  miss <- auto[!key(auto) %in% key(win), ]
-  auto$smooth_h <- 0
-  if (nrow(miss)) { win <- rbind(win[, names(auto)], miss[, names(auto)]); message(nrow(miss), " curves without a manual window: auto window used (raw)") }
-}
+# The analysis-ready series and the fitting intervals come from
+# 46_ptc_sham_prepared_traces.R, so the step correction, the denoising and the
+# interval rule are defined in exactly one place and this script only fits.
+PREP <- file.path(ROOT, "tables/aox/ptc_sham_prepared_traces.csv.gz")
+WINS <- file.path(ROOT, "tables/aox/ptc_sham_windows.csv")
+if (!file.exists(PREP) || !file.exists(WINS))
+  stop("run scripts/46_ptc_sham_prepared_traces.R first")
+L  <- read.csv(PREP, stringsAsFactors = FALSE)
+Wn <- read.csv(WINS, stringsAsFactors = FALSE)
+
 EXC <- file.path(ROOT, "tables/aox/ptc_sham/plot_exclude_points.csv")
 excl <- if (file.exists(EXC)) { e <- read.csv(EXC, stringsAsFactors = FALSE); paste(e$T, e$Dose, toupper(e$Replicate)) } else character(0)
-steps <- read.csv(file.path(ROOT, "tables/aox/ptc_sham_steps.csv"), stringsAsFactors = FALSE)
-steps$Replicate <- sprintf("R%d%s", steps$replicate, steps$well)
 
 rows <- list()
-for (temp in c(15, 27)) {
-  d <- read.csv(file.path(ROOT, sprintf("data/aox/ptc_sham_%d_Oxygen.csv", temp)), check.names = FALSE)
-  for (cv in setdiff(names(d), c("Time", "T"))) {
-    cond <- sub("_R.*$", "", cv); repw <- sub("^.*_", "", cv)
-    if (substr(cond, 1, 1) == "b") next
-    k <- paste(temp, cond, repw)
-    w <- win[win$T == temp & win$Dose == cond & win$Replicate == repw, ][1, ]
-    if (!nrow(w) || is.na(w$fit_start)) { message("no window: ", k); next }
-    tt <- d$Time
-    st <- steps[steps$T == temp & steps$Replicate == repw, ][1, ]
-    shifted <- if (isTRUE(w$fit_end > st$step_time_h * 60)) st$step_mgL else 0   # window spans the handling step
-    yr <- step_correct(tt, d[[cv]], st$step_time_h, st$step_mgL)   # offset only
-    SM <- w$smooth_h
-    y  <- smooth_ma(tt, yr, SM)                                    # + denoising chosen in the selector for this curve
-    m <- tt >= w$fit_start & tt <= w$fit_end & is.finite(y)
-    f <- fit_o2_model(tt[m], y[m])
-    if (is.null(f)) { message("fit failed: ", k); next }
-    mr <- tt >= w$fit_start & tt <= w$fit_end & is.finite(yr)      # sensitivity: same window, raw
-    fr <- if (SM > 0) fit_o2_model(tt[mr], yr[mr]) else f
-    r_raw <- if (is.null(fr)) NA_real_ else fr$r_per_h
-    rows[[length(rows) + 1]] <- data.frame(
-      temp = temp, replicate = as.integer(substr(repw, 2, 2)), well = substr(repw, 3, 4), condition = cond,
-      drug_mgL = c(V = 0, S = 0, P2 = 2, P2S = 2, P4 = 4, P4S = 4)[[cond]],
-      sham_mM = if (cond %in% c("S", "P2S", "P4S")) 0.2 else 0,
-      r_per_h = f$r_per_h, K = f$K, R2 = f$R2, RMSE = f$RMSE, n_pts = f$n_pts,
-      r_per_h_raw = r_raw, smooth_h = SM,
-      fit_start = w$fit_start, fit_end = w$fit_end, step_shift_mgL = shifted,
-      excluded = k %in% excl, stringsAsFactors = FALSE)
-  }
+for (i in seq_len(nrow(Wn))) {
+  w <- Wn[i, ]
+  g <- L[L$temp == w$temp & L$replicate == w$replicate & L$well == w$well & L$in_window, ]
+  k <- paste(w$temp, w$condition, sprintf("R%d%s", w$replicate, w$well))
+  f <- fit_o2_model(g$time_min, g$o2_prepared)                 # the analysis-ready series
+  if (is.null(f)) { message("fit failed: ", k); next }
+  fr <- if (w$smooth_h > 0) fit_o2_model(g$time_min, g$o2_step) else f   # same interval, undenoised
+  rows[[length(rows) + 1]] <- data.frame(
+    temp = w$temp, replicate = w$replicate, well = w$well, condition = w$condition,
+    drug_mgL = w$drug_mgL, sham_mM = w$sham_mM,
+    r_per_h = f$r_per_h, K = f$K, R2 = f$R2, RMSE = f$RMSE, n_pts = f$n_pts,
+    r_per_h_raw = if (is.null(fr)) NA_real_ else fr$r_per_h, smooth_h = w$smooth_h,
+    fit_start = w$fit_start_min, fit_end = w$fit_end_min, o2_used = w$o2_consumed,
+    rule = w$rule, rule_fallback = w$rule_fallback, overridden = w$overridden,
+    step_shift_mgL = w$step_mgL,
+    excluded = k %in% excl, stringsAsFactors = FALSE)
 }
 W <- do.call(rbind, rows)
 W <- W[order(W$temp, W$replicate, match(W$condition, PS_ORDER), W$well), ]
@@ -142,12 +123,16 @@ write.csv(I, file.path(ROOT, "tables/aox/ptc_sham_interaction.csv"), row.names =
 write.csv(D, file.path(ROOT, "tables/aox/ptc_sham_interaction_diff.csv"), row.names = FALSE)
 write.csv(S, file.path(ROOT, "tables/aox/ptc_sham_interaction_tests.csv"), row.names = FALSE)
 
-cat(sprintf("ptc_sham: %d wells fitted (%d excluded), windows: %s, mean R2 = %.4f, min R2 = %.4f\n",
-            nrow(W), sum(W$excluded), win_src, mean(W$R2), min(W$R2)))
+cat(sprintf("ptc_sham: %d wells fitted (%d excluded), intervals: '%s' from 48 (no hand trimming), mean R2 = %.4f, min R2 = %.4f\n",
+            nrow(W), sum(W$excluded), W$rule[1], mean(W$R2), min(W$R2)))
+cat(sprintf("  rule fell back to the plate bounds on %d of %d curves\n", sum(W$rule_fallback), nrow(W)))
+cat(sprintf("  window length (h): 15 C median %.1f, 27 C median %.1f; O2 consumed median %.2f mg/L\n",
+            median((W$fit_end - W$fit_start)[W$temp == 15])/60, median((W$fit_end - W$fit_start)[W$temp == 27])/60,
+            median(W$o2_used)))
 cat(sprintf("  step correction applied to %d wells (median |shift| %.2f mg/L)\n",
             sum(W$step_shift_mgL != 0), median(abs(W$step_shift_mgL[W$step_shift_mgL != 0]))))
 sm_tab <- aggregate(smooth_h ~ temp, W, function(x) paste(unique(x), collapse = "/"))
-cat("  denoising width (h) by temperature:", paste(sprintf("%d C: %s", sm_tab$temp, sm_tab$smooth_h), collapse = ", "), "\n")
+cat("  denoising (h) by temperature:", paste(sprintf("%d C: %s", sm_tab$temp, sm_tab$smooth_h), collapse = ", "), "\n")
 if (any(W$smooth_h > 0)) cat(sprintf("  raw-vs-denoised r on denoised curves: median change %.1f%%, max %.1f%%\n",
             100 * median(abs(W$r_per_h / W$r_per_h_raw - 1)[W$smooth_h > 0], na.rm = TRUE),
             100 * max(abs(W$r_per_h / W$r_per_h_raw - 1)[W$smooth_h > 0], na.rm = TRUE)))
@@ -158,4 +143,25 @@ names(rel) <- sub("r_rel\\.", "", names(rel)); print(round(rel[, c("temp", "repl
 cat("\ninteraction contrast I (0 = independent, < 0 = SHAM potentiates the drug):\n")
 print(round(I[, c("temp", "replicate", "I_2", "I_4", "obs_rel_P2S", "pred_rel_P2S", "obs_rel_P4S", "pred_rel_P4S")], 3), row.names = FALSE)
 cat("\nI27 - I15 per replicate:\n"); print(round(D, 3), row.names = FALSE)
+# --- with and without any manual interval overrides --------------------------
+if (any(W$overridden)) {
+  ru <- W; ru$r_per_h <- NA_real_
+  for (i in which(W$overridden)) {                       # refit those wells on the rule interval
+    w <- Wn[Wn$temp == W$temp[i] & Wn$replicate == W$replicate[i] & Wn$well == W$well[i], ][1, ]
+    g <- L[L$temp == w$temp & L$replicate == w$replicate & L$well == w$well &
+           L$time_min >= w$rule_start_min & L$time_min <= w$rule_end_min & is.finite(L$o2_prepared), ]
+    f <- fit_o2_model(g$time_min, g$o2_prepared); if (!is.null(f)) ru$r_per_h[i] <- f$r_per_h
+  }
+  ru$r_per_h[!W$overridden] <- W$r_per_h[!W$overridden]
+  Mr <- aggregate(r_per_h ~ temp + replicate + condition, ru[!ru$excluded, ], mean)
+  gg <- function(tp, rp, cd) Mr$r_per_h[Mr$temp == tp & Mr$replicate == rp & Mr$condition == cd]
+  II <- function(tp, rp, dd) log(gg(tp,rp,paste0(dd,"S"))) - log(gg(tp,rp,dd)) - log(gg(tp,rp,"S")) + log(gg(tp,rp,"V"))
+  dr <- sapply(1:3, function(rp) II(27,rp,"P2") - II(15,rp,"P2"))
+  cat(sprintf("\nmanual overrides on %d wells. I27 - I15 at 2 mg/L: %+.3f with them, %+.3f on the rule intervals alone\n",
+              sum(W$overridden), mean(D$d_2), mean(dr)))
+  for (i in which(W$overridden)) cat(sprintf("    %d C %-4s culture %d %s: %s\n",
+      W$temp[i], W$condition[i], W$replicate[i], W$well[i],
+      Wn$override_reason[Wn$temp == W$temp[i] & Wn$replicate == W$replicate[i] & Wn$well == W$well[i]][1]))
+} else cat("\nmanual interval overrides: none; every interval came from the rule\n")
+
 cat("\ntests (n = 3 replicates; paired within replicate):\n"); print(S, row.names = FALSE, digits = 3)

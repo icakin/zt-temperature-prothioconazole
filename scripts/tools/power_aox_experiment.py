@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # =============================================================================
-# 40_power_aox_experiment.py — sample-size / power for the AOX inhibitor growth
+# tools/power_aox_experiment.py — sample-size / power for the AOX inhibitor growth
 # arm, using the residual log-growth variance of the EXISTING SensorDish data.
 # Vial-level residual is a LOWER BOUND on biological (between-culture) variance.
 # =============================================================================

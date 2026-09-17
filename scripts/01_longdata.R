@@ -26,12 +26,12 @@ all_files <- list.files(
   full.names = TRUE
 )
 
-# Keep files like:
-# 15zymo_Oxygen.csv, 18zymo_Oxygen.CSV, "15 zymo_Oxygen.csv", etc.
+# Thermal performance / dose-response plates, one CSV per assay temperature:
+# tpc_15_Oxygen.csv, tpc_18_Oxygen.csv, ... tpc_28_Oxygen.csv
 files <- all_files[
   stringr::str_detect(
     basename(all_files),
-    regex("^\\s*\\d+\\s*zymo_Oxygen\\s*\\.csv\\s*$", ignore_case = TRUE)
+    regex("^tpc_\\d+_Oxygen\\.csv$", ignore_case = TRUE)
   )
 ]
 
@@ -55,7 +55,7 @@ read_one <- function(path) {
   names(df) <- stringr::str_trim(names(df))
 
   # Extract leading temperature number from filename
-  temp_from_name <- stringr::str_extract(basename(path), "^\\s*\\d+")
+  temp_from_name <- stringr::str_extract(basename(path), "(?<=^tpc_)\\d+")
   temp_from_name <- suppressWarnings(as.numeric(stringr::str_trim(temp_from_name)))
 
   # Add T if missing or all NA

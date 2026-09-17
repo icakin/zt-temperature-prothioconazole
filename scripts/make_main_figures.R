@@ -3,7 +3,7 @@
 # make_main_figures.R -- build every main-text figure, in order.
 #
 #   Rscript scripts/make_main_figures.R            # run from the repository root
-#   Rscript scripts/make_main_figures.R 3 7        # or rebuild only these figures
+#   Rscript scripts/make_main_figures.R 3 6        # or rebuild only these figures
 #
 # Each step runs in its own R session, so one failure does not poison the rest
 # and package namespaces cannot collide. Every figure ends up in figures/ under
@@ -17,8 +17,9 @@ STEPS <- list(
   list(fig = 3, scripts = "53_figure3.R", src = "figures/Figure3"),
   list(fig = 4, scripts = "54_figure4.R", src = "figures/Figure4"),
   list(fig = 5, scripts = "55_figure5.R", src = "figures/Figure5"),
-  list(fig = 6, scripts = c("43_azide_rates.R", "56_figure6.R"), src = "figures/Figure6"),
-  list(fig = 7, scripts = c("46_ptc_sham_rates.R", "57_figure7.R"), src = "figures/Figure7"))
+  list(fig = 6, scripts = c("39_aox_prepare.R", "41_sham_rates.R", "43_azide_rates.R",
+                            "45_ptc_sham_prepare.R", "46_ptc_sham_prepared_traces.R",
+                            "47_ptc_sham_rates.R", "56_figure6.R"), src = "figures/Figure6"))
 
 args <- commandArgs(trailingOnly = TRUE)
 want <- if (length(args)) as.integer(args) else vapply(STEPS, `[[`, 0, "fig")

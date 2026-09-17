@@ -7,7 +7,7 @@
 # denoised trace when a moving average was chosen in the trim selector (what
 # was fitted). Dashed line: the fitted oxygen model
 # O(t) = O2_0 + (K/r)(1 - exp(rt)), refitted here with the procedure of
-# 46_ptc_sham_rates.R, so the r values printed in each panel are those in
+# 47_ptc_sham_rates.R, so the r values printed in each panel are those in
 # tables/aox/ptc_sham_well_rates.csv.
 # Inputs : data/aox/ptc_sham_{15,27}_Oxygen.csv, tables/aox/ptc_sham_well_rates.csv,
 #          tables/aox/ptc_sham_steps.csv
