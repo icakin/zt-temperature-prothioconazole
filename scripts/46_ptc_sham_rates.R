@@ -15,8 +15,8 @@
 # the reading jumps when they go back (tables/aox/ptc_sham_steps.csv). The
 # post-step readings are shifted by the measured jump (an offset only; recorded
 # per well where the interval spans it).
-# Denoising: the moving-average width chosen in the trim selector and saved as
-# smooth_h in manual_fit_windows.csv is applied to every curve before fitting
+# Denoising: the moving-average width chosen in the trim selector and saved per
+# curve as smooth_h in manual_fit_windows.csv is applied to that curve before fitting
 # (smooth_ma in aox_common.R; r is unbiased by a centred moving average under
 # this model). The fit of the same window on the undenoised trace is kept as
 # r_per_h_raw.
@@ -47,14 +47,16 @@ AUTO <- file.path(ROOT, "tables/aox/ptc_sham_fit_windows_auto.csv")
 win_src <- if (file.exists(MAN)) "manual (trim selector)" else "rule-based (45_ptc_sham_prepare.R)"
 win <- read.csv(if (file.exists(MAN)) MAN else AUTO, stringsAsFactors = FALSE)
 win$Replicate <- toupper(win$Replicate)
-# denoising width chosen in the trim selector (one value for the whole set;
-# 0 = raw). Applied identically to every curve, after the step offset.
-SMOOTH_H <- if ("smooth_h" %in% names(win) && any(is.finite(win$smooth_h))) win$smooth_h[is.finite(win$smooth_h)][1] else 0
+# denoising width chosen in the trim selector, stored per curve (0 = raw);
+# applied to each curve after the step offset
+if (!"smooth_h" %in% names(win)) win$smooth_h <- 0
+win$smooth_h[!is.finite(win$smooth_h)] <- 0
 if (file.exists(MAN)) {                      # fall back per curve to the auto window where none was set
   auto <- read.csv(AUTO, stringsAsFactors = FALSE)
   key <- function(d) paste(d$T, d$Dose, toupper(d$Replicate))
   miss <- auto[!key(auto) %in% key(win), ]
-  if (nrow(miss)) { win <- rbind(win[, names(auto)], miss[, names(auto)]); message(nrow(miss), " curves without a manual window: auto window used") }
+  auto$smooth_h <- 0
+  if (nrow(miss)) { win <- rbind(win[, names(auto)], miss[, names(auto)]); message(nrow(miss), " curves without a manual window: auto window used (raw)") }
 }
 EXC <- file.path(ROOT, "tables/aox/ptc_sham/plot_exclude_points.csv")
 excl <- if (file.exists(EXC)) { e <- read.csv(EXC, stringsAsFactors = FALSE); paste(e$T, e$Dose, toupper(e$Replicate)) } else character(0)
@@ -74,19 +76,20 @@ for (temp in c(15, 27)) {
     st <- steps[steps$T == temp & steps$Replicate == repw, ][1, ]
     shifted <- if (isTRUE(w$fit_end > st$step_time_h * 60)) st$step_mgL else 0   # window spans the handling step
     yr <- step_correct(tt, d[[cv]], st$step_time_h, st$step_mgL)   # offset only
-    y  <- smooth_ma(tt, yr, SMOOTH_H)                              # + denoising chosen in the selector
+    SM <- w$smooth_h
+    y  <- smooth_ma(tt, yr, SM)                                    # + denoising chosen in the selector for this curve
     m <- tt >= w$fit_start & tt <= w$fit_end & is.finite(y)
     f <- fit_o2_model(tt[m], y[m])
     if (is.null(f)) { message("fit failed: ", k); next }
     mr <- tt >= w$fit_start & tt <= w$fit_end & is.finite(yr)      # sensitivity: same window, raw
-    fr <- if (SMOOTH_H > 0) fit_o2_model(tt[mr], yr[mr]) else f
+    fr <- if (SM > 0) fit_o2_model(tt[mr], yr[mr]) else f
     r_raw <- if (is.null(fr)) NA_real_ else fr$r_per_h
     rows[[length(rows) + 1]] <- data.frame(
       temp = temp, replicate = as.integer(substr(repw, 2, 2)), well = substr(repw, 3, 4), condition = cond,
       drug_mgL = c(V = 0, S = 0, P2 = 2, P2S = 2, P4 = 4, P4S = 4)[[cond]],
       sham_mM = if (cond %in% c("S", "P2S", "P4S")) 0.2 else 0,
       r_per_h = f$r_per_h, K = f$K, R2 = f$R2, RMSE = f$RMSE, n_pts = f$n_pts,
-      r_per_h_raw = r_raw, smooth_h = SMOOTH_H,
+      r_per_h_raw = r_raw, smooth_h = SM,
       fit_start = w$fit_start, fit_end = w$fit_end, step_shift_mgL = shifted,
       excluded = k %in% excl, stringsAsFactors = FALSE)
   }
@@ -141,11 +144,13 @@ write.csv(S, file.path(ROOT, "tables/aox/ptc_sham_interaction_tests.csv"), row.n
 
 cat(sprintf("ptc_sham: %d wells fitted (%d excluded), windows: %s, mean R2 = %.4f, min R2 = %.4f\n",
             nrow(W), sum(W$excluded), win_src, mean(W$R2), min(W$R2)))
-cat(sprintf("  step correction applied to %d wells (median |shift| %.2f mg/L); denoising %g h",
-            sum(W$step_shift_mgL != 0), median(abs(W$step_shift_mgL[W$step_shift_mgL != 0])), SMOOTH_H))
-if (SMOOTH_H > 0) cat(sprintf(" (raw-vs-denoised r: median change %.1f%%, max %.1f%%)",
-            100 * median(abs(W$r_per_h / W$r_per_h_raw - 1), na.rm = TRUE), 100 * max(abs(W$r_per_h / W$r_per_h_raw - 1), na.rm = TRUE)))
-cat("\n")
+cat(sprintf("  step correction applied to %d wells (median |shift| %.2f mg/L)\n",
+            sum(W$step_shift_mgL != 0), median(abs(W$step_shift_mgL[W$step_shift_mgL != 0]))))
+sm_tab <- aggregate(smooth_h ~ temp, W, function(x) paste(unique(x), collapse = "/"))
+cat("  denoising width (h) by temperature:", paste(sprintf("%d C: %s", sm_tab$temp, sm_tab$smooth_h), collapse = ", "), "\n")
+if (any(W$smooth_h > 0)) cat(sprintf("  raw-vs-denoised r on denoised curves: median change %.1f%%, max %.1f%%\n",
+            100 * median(abs(W$r_per_h / W$r_per_h_raw - 1)[W$smooth_h > 0], na.rm = TRUE),
+            100 * max(abs(W$r_per_h / W$r_per_h_raw - 1)[W$smooth_h > 0], na.rm = TRUE)))
 cat("\nrelative growth rate r/r_V (plate means):\n")
 rel <- reshape(M[, c("temp", "replicate", "condition", "r_rel")], idvar = c("temp", "replicate"),
                timevar = "condition", direction = "wide")

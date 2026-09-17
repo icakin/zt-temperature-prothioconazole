@@ -14,10 +14,12 @@
 #   tables/plot_exclude_points.csv and printed as a ready-to-paste EXCLUDE_POINTS
 #   block for 04_oxygen_fits.R. The currently-discarded samples (the EXCLUDE_POINTS
 #   already in 04_oxygen_fits.R) are RESTORED on startup from that CSV.
-# - DENOISE: "centred moving average, hours" (0 = raw) smooths every curve
-#   before display, guide fit and auto-detect; one value for the whole set,
-#   saved as the smooth_h column of manual_fit_windows.csv and applied by the
-#   fitting script (e.g. 46_ptc_sham_rates.R) so what you trim is what is fitted.
+# - DENOISE: "centred moving average, hours" (0 = raw) smooths the displayed
+#   curve, the guide fit and auto-detect. The value in force when a curve's
+#   window is set is stored with that curve (smooth_h in manual_fit_windows.csv)
+#   and applied per curve by the fitting script (e.g. 46_ptc_sham_rates.R), so
+#   what you trim is what is fitted, and plates can use different widths.
+# - "Auto ALL applies to": all curves or one temperature only.
 # - Curves are keyed by T + Dose + Replicate (this project has no "Clade").
 # - Persists: reloads tables/manual_fit_windows.csv + plot_exclude_points.csv.
 #
@@ -299,18 +301,20 @@ curves <- long %>%
 
 # preload existing manual windows (and the denoising width saved with them)
 init <- data.frame(key = character(0), fit_start = numeric(0), fit_end = numeric(0),
-                   stringsAsFactors = FALSE)
+                   smooth_h = numeric(0), stringsAsFactors = FALSE)
 init_smooth_h <- 0
 if (file.exists(out_csv)) {
   prev <- tryCatch(readr::read_csv(out_csv, show_col_types = FALSE), error = function(e) NULL)
   if (!is.null(prev) && "smooth_h" %in% names(prev) && any(is.finite(prev$smooth_h)))
     init_smooth_h <- prev$smooth_h[is.finite(prev$smooth_h)][1]
   if (!is.null(prev) && all(c("T", "Dose", "Replicate") %in% names(prev))) {
+    if (!"smooth_h" %in% names(prev)) prev$smooth_h <- 0
     init <- prev %>%
       dplyr::mutate(key = paste(as.numeric(T), as.character(Dose), toupper(Replicate), sep = "_"),
                     fit_start = suppressWarnings(as.numeric(fit_start)),
-                    fit_end   = suppressWarnings(as.numeric(fit_end))) %>%
-      dplyr::select(key, fit_start, fit_end)
+                    fit_end   = suppressWarnings(as.numeric(fit_end)),
+                    smooth_h  = suppressWarnings(as.numeric(smooth_h))) %>%
+      dplyr::select(key, fit_start, fit_end, smooth_h)
   }
 }
 
@@ -338,7 +342,7 @@ ui <- fluidPage(
       radioButtons("mode", "Click sets:", c("Start", "End"), selected = "Start", inline = TRUE),
       numericInput("smooth_h", "Denoise: centred moving average, hours (0 = raw)",
                    value = init_smooth_h, min = 0, max = 12, step = 0.5),
-      helpText("One value for the whole curve set; it is saved with the windows and applied by the fitting script. Grey = raw readings, black = denoised trace (what is trimmed and fitted)."),
+      helpText("Saved with each curve's window (the value in force when you set it), so plates can differ; the fitting script applies it per curve. Grey = raw readings, black = denoised trace (what is trimmed and fitted)."),
       checkboxInput("show_guide", "Show model guide curve (blue)", value = TRUE),
       checkboxInput("show_exp", "Show suggested exponential phase (orange dotted)", value = TRUE),
       numericInput("exp_frac", "Suggested end at % of draw-down (from your start)",
@@ -374,6 +378,10 @@ ui <- fluidPage(
         numericInput("start_drawdown", "Start drawdown %", value = 5,
                      min = 0, max = 50, step = 1)
       ),
+      radioButtons("auto_scope", "Auto ALL applies to:",
+                   choices = c("all curves" = "all", setNames(as.character(sort(unique(curves$T))),
+                                                              paste0(sort(unique(curves$T)), " °C only"))),
+                   selected = "all", inline = TRUE),
       fluidRow(
         column(6, actionButton("auto_one", "Auto THIS curve", width = "100%")),
         column(6, actionButton("auto_all", "Auto ALL curves", width = "100%"))
@@ -445,10 +453,15 @@ server <- function(input, output, session) {
     smooth_curve(d, input$smooth_h)
   }
 
+  cur_sh <- function() if (is.null(input$smooth_h) || !is.finite(input$smooth_h)) 0 else input$smooth_h
+  new_row <- function(k) data.frame(key = k, fit_start = NA_real_, fit_end = NA_real_, smooth_h = cur_sh())
+  # The denoising width in force when a curve's window is set is stored with
+  # that curve, so different plates can use different widths.
   set_val <- function(k, side, val) {
     w <- wins()
-    if (!(k %in% w$key)) w <- rbind(w, data.frame(key = k, fit_start = NA_real_, fit_end = NA_real_))
+    if (!(k %in% w$key)) w <- rbind(w, new_row(k))
     w[w$key == k, side] <- val
+    w[w$key == k, "smooth_h"] <- cur_sh()
     # drop fully-empty rows
     w <- w[!(is.na(w$fit_start) & is.na(w$fit_end)), , drop = FALSE]
     wins(w)
@@ -479,10 +492,10 @@ server <- function(input, output, session) {
     }
     w <- wins()
     for (k in curves$key) {
-      if (!(k %in% w$key))
-        w <- rbind(w, data.frame(key = k, fit_start = NA_real_, fit_end = NA_real_))
+      if (!(k %in% w$key)) w <- rbind(w, new_row(k))
       if (is.finite(s)) w[w$key == k, "fit_start"] <- s
       if (is.finite(e)) w[w$key == k, "fit_end"]   <- e
+      w[w$key == k, "smooth_h"] <- cur_sh()
     }
     w <- w[!(is.na(w$fit_start) & is.na(w$fit_end)), , drop = FALSE]
     wins(w)
@@ -508,11 +521,13 @@ server <- function(input, output, session) {
   })
 
   observeEvent(input$auto_all, {
-    n <- nrow(curves)
+    sel <- if (is.null(input$auto_scope) || input$auto_scope == "all") seq_len(nrow(curves))
+           else which(curves$T == as.numeric(input$auto_scope))
+    n <- length(sel)
     w <- wins()
     sd_frac <- (if (is.null(input$start_drawdown)) 5 else input$start_drawdown) / 100
-    withProgress(message = "Auto-detecting all curves...", value = 0, {
-      for (i in seq_len(n)) {
+    withProgress(message = sprintf("Auto-detecting %d curves...", n), value = 0, {
+      for (i in sel) {
         k <- curves$key[i]
         d <- curve_data(k)
         se <- auto_detect_window(d$Time, d$Oxygen, input$r2_target, input$rmse_max,
@@ -521,17 +536,17 @@ server <- function(input, output, session) {
                                  t_peak_max = input$t_peak_max, end_mode = input$end_mode,
                                  r_tol = if (is.null(input$r_tol)) 0.05 else input$r_tol)
         if (all(is.finite(se))) {
-          if (!(k %in% w$key))
-            w <- rbind(w, data.frame(key = k, fit_start = NA_real_, fit_end = NA_real_))
+          if (!(k %in% w$key)) w <- rbind(w, new_row(k))
           w[w$key == k, "fit_start"] <- round(se[1], 1)
           w[w$key == k, "fit_end"]   <- round(se[2], 1)
+          w[w$key == k, "smooth_h"]  <- cur_sh()
         }
         incProgress(1 / n)
       }
     })
     w <- w[!(is.na(w$fit_start) & is.na(w$fit_end)), , drop = FALSE]
     wins(w)
-    showNotification("Auto-detect ALL done. Review and tweak as needed.", type = "message")
+    showNotification(sprintf("Auto-detect done for %d curves. Review and tweak as needed.", n), type = "message")
   })
 
   # Fit resp_model to the CURRENT window and report how well the raw data matches
@@ -698,8 +713,7 @@ server <- function(input, output, session) {
                                dplyr::mutate(fit_start = numeric(0), fit_end = numeric(0), smooth_h = numeric(0)))
     curves %>% dplyr::inner_join(w, by = "key") %>%
       dplyr::arrange(T, .dose_key(Dose), Replicate) %>%
-      dplyr::select(T, Dose, Replicate, fit_start, fit_end) %>%
-      dplyr::mutate(smooth_h = if (is.null(input$smooth_h) || !is.finite(input$smooth_h)) 0 else input$smooth_h)
+      dplyr::select(T, Dose, Replicate, fit_start, fit_end, smooth_h)
   })
 
   output$count <- renderText(sprintf("Manual windows set: %d curve(s)", nrow(win_df())))

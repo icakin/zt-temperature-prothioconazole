@@ -63,8 +63,9 @@ th <- theme_classic(base_size = 8) +
         legend.position = "top", legend.text = element_text(size = 7),
         legend.key.width = unit(6, "mm"), legend.margin = margin(0, 0, 0, 0))
 
-SM <- unique(W$smooth_h)[1]
-win_lab <- if (is.finite(SM) && SM > 0) sprintf("fitting interval (%g h moving average)", SM) else "fitting interval"
+sm_tab <- aggregate(smooth_h ~ temp, W, function(x) paste(unique(x), collapse = "/"))
+sm_txt <- paste(sprintf("%s h at %d °C", sm_tab$smooth_h, sm_tab$temp), collapse = ", ")
+win_lab <- if (any(W$smooth_h > 0)) sprintf("fitting interval (moving average: %s)", sm_txt) else "fitting interval"
 p <- ggplot() +
   geom_line(data = raw, aes(t_h, o2, group = g, colour = temp, linetype = "raw"), linewidth = 0.28, alpha = 0.28) +
   geom_line(data = subset(raw, inwin), aes(t_h, o2s, group = g, colour = temp, linetype = "win"), linewidth = 0.4, alpha = 0.85) +
