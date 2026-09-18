@@ -106,12 +106,10 @@ pB <- ggplot(B, aes(diff, what)) +
   geom_point(size = 2.4, colour = INK) +
   labs(x = expression(italic(I)[27]-italic(I)[15]), y = NULL) + th
 
-fig <- (pA | pB) + plot_layout(widths = c(1, 0.78)) +
-  plot_annotation(tag_levels = "a") &
-  theme(plot.tag = element_text(size = 10, face = "bold", colour = INK))
+fig <- pA
 OUT <- file.path(ROOT, "figures"); dir.create(OUT, showWarnings = FALSE, recursive = TRUE)
-ggsave(file.path(OUT, "FigureS21.png"), fig, width = 7.2, height = 3.4, dpi = 400, bg = "white")
-ok <- tryCatch({ ggsave(file.path(OUT, "FigureS21.pdf"), fig, width = 7.2, height = 3.4,
+ggsave(file.path(OUT, "FigureS21.png"), fig, width = 4.6, height = 3.4, dpi = 400, bg = "white")
+ok <- tryCatch({ ggsave(file.path(OUT, "FigureS21.pdf"), fig, width = 4.6, height = 3.4,
                         device = cairo_pdf, bg = "white"); TRUE }, error = function(e) FALSE)
 cat("Figure S21\n"); print(rbind(S, S2)[, c("label","background","I15","I27","P27","diff","lo","hi","P")],
                             row.names = FALSE, digits = 3)
