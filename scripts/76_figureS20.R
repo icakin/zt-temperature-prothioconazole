@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 # =============================================================================
-# 78_figureS21.R -- Figure S21: is the prothioconazole x SHAM interaction an
+# 76_figureS20.R -- Figure S20: is the prothioconazole x SHAM interaction an
 # artefact of how the 27 C traces are denoised, or of the background oxygen loss?
 #
 # Two checks, both on the hand-selected fitting intervals, which are held fixed
@@ -20,8 +20,8 @@
 #          data/aox/ptc_sham_layout.csv
 #          tables/aox/ptc_sham/manual_fit_windows.csv
 # Outputs: tables/aox/ptc_sham_preprocessing.csv
-#          figures/FigureS21.png / .pdf
-# Run from the repository root:  Rscript scripts/78_figureS21.R
+#          figures/FigureS20.png / .pdf
+# Run from the repository root:  Rscript scripts/76_figureS20.R
 # =============================================================================
 suppressPackageStartupMessages({library(ggplot2); library(patchwork)})
 ARGS <- commandArgs(trailingOnly = TRUE); ROOT <- if (length(ARGS)) ARGS[1] else "."
@@ -108,10 +108,10 @@ pB <- ggplot(B, aes(diff, what)) +
 
 fig <- pA
 OUT <- file.path(ROOT, "figures"); dir.create(OUT, showWarnings = FALSE, recursive = TRUE)
-ggsave(file.path(OUT, "FigureS21.png"), fig, width = 4.6, height = 3.4, dpi = 400, bg = "white")
-ok <- tryCatch({ ggsave(file.path(OUT, "FigureS21.pdf"), fig, width = 4.6, height = 3.4,
+ggsave(file.path(OUT, "FigureS20.png"), fig, width = 4.6, height = 3.4, dpi = 400, bg = "white")
+ok <- tryCatch({ ggsave(file.path(OUT, "FigureS20.pdf"), fig, width = 4.6, height = 3.4,
                         device = cairo_pdf, bg = "white"); TRUE }, error = function(e) FALSE)
-cat("Figure S21\n"); print(rbind(S, S2)[, c("label","background","I15","I27","P27","diff","lo","hi","P")],
+cat("Figure S20\n"); print(rbind(S, S2)[, c("label","background","I15","I27","P27","diff","lo","hi","P")],
                             row.names = FALSE, digits = 3)
 cat(sprintf("\nbackground loss over the fitting intervals (mg/L/h): 15 C %.4f, 27 C %.4f\n",
             mean(unlist(BSL[grep("^15", names(BSL))])), mean(unlist(BSL[grep("^27", names(BSL))]))))

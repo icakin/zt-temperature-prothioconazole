@@ -16,7 +16,7 @@ format:
 
 Ilgaz Cakin, Helen Fones, Nicholas Smirnoff, Samraat Pawar, Angus Buckling, Daniel Padfield, Gabriel Yvon-Durocher
 
-This document contains Supplementary Figures S1–S14 and Supplementary Table S1.
+This document contains Supplementary Figures S1–S20 and Supplementary Tables S1 and S2.
 
 
 ![](../figures/FigureS1.png){width=6.3in}
@@ -160,9 +160,9 @@ The separable model's exact leave-one-out RMSE is 0.2343.
 
 \newpage
 
-![](../figures/FigureS21.png){width=6.3in}
+![](../figures/FigureS20.png){width=6.3in}
 
-**Figure S21. The interaction is not produced by the denoising of the 27 °C traces.** The growth rate is identified from the curvature of the oxygen decline, and a centred moving average attenuates curvature most in the fastest wells, so denoising applied only to the 27 °C plates could in principle create a negative interaction there. The hand-selected fitting intervals are held fixed and only the moving average is varied. The interaction contrast *I* at 2 mg L⁻¹ at each temperature as the moving average applied to the 27 °C traces is widened from none to 12 h, with 15 °C left unsmoothed, and in the last row with 12 h applied at both temperatures. *I*₂₇ moves from −1.12 with no smoothing to −0.96 at 12 h, so the effect is largest when nothing is done to the traces and the analysis reported in the main text is the most conservative of those tested; *I*₁₅ remains indistinguishable from zero throughout, including when the same 12 h average is applied to it (−0.01, P = 0.86). Values for every configuration are in `tables/aox/ptc_sham_preprocessing.csv`.
+**Figure S20. The interaction is not produced by the denoising of the 27 °C traces.** The growth rate is identified from the curvature of the oxygen decline, and a centred moving average attenuates curvature most in the fastest wells, so denoising applied only to the 27 °C plates could in principle create a negative interaction there. The hand-selected fitting intervals are held fixed and only the moving average is varied. The interaction contrast *I* at 2 mg L⁻¹ at each temperature as the moving average applied to the 27 °C traces is widened from none to 12 h, with 15 °C left unsmoothed, and in the last row with 12 h applied at both temperatures. *I*₂₇ moves from −1.12 with no smoothing to −0.96 at 12 h, so the effect is largest when nothing is done to the traces and the analysis reported in the main text is the most conservative of those tested; *I*₁₅ remains indistinguishable from zero throughout, including when the same 12 h average is applied to it (−0.01, P = 0.86). Values for every configuration are in `tables/aox/ptc_sham_preprocessing.csv`.
 
 \newpage
 
