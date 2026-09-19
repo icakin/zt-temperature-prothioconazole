@@ -1,15 +1,22 @@
 # =============================================================================
 # 68_figureS12.R -- Figure S12: SHAM temperature contrast vs fitting-interval rule
-# Inputs : tables/aox/window_robustness.csv (rule, drop035, s15, s27, diff, p)
+# Inputs : tables/aox/uniform_window_analysis.csv (from 42_uniform_window_analysis.R)
+#          tables/aox/sham_culture_rates.csv       (from 41_sham_rates.R; primary estimate)
 # Outputs: figures/FigureS12.png, figures/FigureS12.pdf
 # =============================================================================
 suppressPackageStartupMessages({library(ggplot2); library(dplyr); library(patchwork)})
 ARGS <- commandArgs(trailingOnly = TRUE); ROOT <- if (length(ARGS)) ARGS[1] else "."
 C15 <- "#2166AC"; C27 <- "#B2182B"; INK <- "#1B2420"
-PRIMARY <- -0.0238                    # hand-selected windows, Fig. 6
+# Primary estimate (hand-selected windows, Fig. 6b): 27 C minus 15 C difference in
+# the mean per-culture slope of r on log10[SHAM], 0.35 mM excluded.
+pr <- read.csv(file.path(ROOT, "tables/aox/sham_culture_rates.csv"))
+pr <- pr[pr$dose_mM > 0 & pr$dose_mM != 0.35, ]
+psl <- sapply(split(pr, list(pr$temp, pr$culture), drop = TRUE), function(g)
+  c(temp = g$temp[1], slope = unname(coef(lm(r_per_h ~ log10(dose_mM), g))[2])))
+PRIMARY <- mean(psl["slope", psl["temp", ] == 27]) - mean(psl["slope", psl["temp", ] == 15])
 
-d <- read.csv(file.path(ROOT, "tables/aox/window_robustness.csv"), stringsAsFactors = FALSE)
-d <- d[as.logical(d$drop035), ]       # 0.35 mM excluded, as in the main analysis
+d <- read.csv(file.path(ROOT, "tables/aox/uniform_window_analysis.csv"), stringsAsFactors = FALSE)
+d <- d[d$inhibitor == "sham" & d$min_O2 == 0, ]   # all curves, 0.35 mM excluded as in the main analysis
 d$lab <- ifelse(grepl("^fixed", d$rule), paste0(d$rule, " min"), d$rule)
 d$lab <- factor(d$lab, levels = rev(d$lab))
 
@@ -54,5 +61,5 @@ fig <- (pA | pB) + plot_layout(widths = c(1, 0.85)) +
 dir.create(file.path(ROOT, "figures"), showWarnings = FALSE, recursive = TRUE)
 ggsave(file.path(ROOT, "figures/FigureS12.png"), fig, width = 6.3, height = 2.7, dpi = 600, bg = "white")
 ggsave(file.path(ROOT, "figures/FigureS12.pdf"), fig, width = 6.3, height = 2.7, device = cairo_pdf, bg = "white")
-cat(sprintf("FigS12: %d rules | 27C steeper in %d/%d | diff range %.4f to %.4f\n",
-    nrow(d), sum(d$s27 < d$s15), nrow(d), min(d$diff), max(d$diff)))
+cat(sprintf("FigS12: %d rules | 27C steeper in %d/%d | diff range %.4f to %.4f | primary %.4f\n",
+    nrow(d), sum(d$s27 < d$s15), nrow(d), min(d$diff), max(d$diff), PRIMARY))

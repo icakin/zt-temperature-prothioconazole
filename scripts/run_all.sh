@@ -30,6 +30,7 @@ if [[ "${1:-}" == "--all" ]]; then
   Rscript scripts/39_aox_prepare.R .
   Rscript scripts/41_sham_rates.R . sham
   Rscript scripts/41_sham_rates.R . npg
+  Rscript scripts/42_uniform_window_analysis.R .
   Rscript scripts/43_azide_rates.R .
   Rscript scripts/44_sham_denoise_sensitivity.R .
   Rscript scripts/45_ptc_sham_prepare.R .

@@ -58,9 +58,8 @@ inh <- local({
   # essentially linear carries no growth signal whatever its R^2. r2_gain
   # (41_sham_rates.R) is how much the curved model improves on a straight line on
   # the same points; below GAIN_MIN the growth rate is not determined by the data.
-  # The criterion is applied identically at both temperatures and flags 2 of 3
-  # curves at 0.1 mM and all three at 0.35 mM at 27 C, none at 15 C. Flagged
-  # points are drawn open in panel a; the slopes in b are unchanged.
+  # The criterion is applied identically at both temperatures; flagged points are
+  # drawn open in panel a and the slopes in b are unchanged.
   GAIN_MIN <- 0.005
   d$weak <- is.finite(d$r2_gain) & d$r2_gain < GAIN_MIN
   dose <- subset(d, dose_mM > 0 & dose_mM != DROP_DOSE); dose$ld <- log10(dose$dose_mM)
